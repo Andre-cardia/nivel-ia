@@ -10,7 +10,6 @@ import OpenQuestion from './pages/OpenQuestion'
 import Result from './pages/Result'
 import AdminLogin from './pages/admin/Login'
 import AdminDashboard from './pages/admin/Dashboard'
-import Surveys from './pages/admin/Surveys'
 import SurveyNew from './pages/admin/SurveyNew'
 import SurveyDetail from './pages/admin/SurveyDetail'
 
@@ -109,7 +108,6 @@ function AdminRoute() {
   return (
     <Routes>
       <Route path="/" element={<AdminDashboard onSignOut={handleSignOut} />} />
-      <Route path="/surveys" element={<Surveys onSignOut={handleSignOut} />} />
       <Route path="/surveys/new" element={<SurveyNew onSignOut={handleSignOut} />} />
       <Route path="/surveys/:id" element={<SurveyDetail onSignOut={handleSignOut} />} />
       <Route path="*" element={<Navigate to="/admin" replace />} />
