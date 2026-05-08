@@ -24,8 +24,8 @@ function QuizApp() {
   useEffect(() => {
     if (!token) return
     supabase.from('surveys').select('*').eq('token', token).eq('is_active', true).single()
-      .then(({ data, err }) => {
-        if (err || !data) setError('Pesquisa não encontrada ou inativa.')
+      .then(({ data, error }) => {
+        if (error || !data) setError('Pesquisa não encontrada ou inativa.')
         else setSurvey(data)
         setLoading(false)
       })
@@ -118,11 +118,13 @@ function AdminRoute() {
 /* ── Root ────────────────────────────────────────────────── */
 export default function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/diagnostico">
       <Routes>
-        {/* Public quiz */}
-        <Route path="/" element={<QuizApp />} />
+        {/* Public quiz — only via tokenized link */}
         <Route path="/q/:token" element={<QuizApp />} />
+
+        {/* Root → admin login */}
+        <Route path="/" element={<Navigate to="/admin/login" replace />} />
 
         {/* Admin */}
         <Route path="/admin/login" element={<AdminLogin />} />
