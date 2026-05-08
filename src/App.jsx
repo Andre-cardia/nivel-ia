@@ -71,7 +71,6 @@ function QuizApp() {
           dimensionScores={quiz.dimensionScores}
           identification={quiz.identification}
           openAnswer={quiz.openAnswer}
-          onRestart={quiz.restart}
           survey={survey}
         />
       )}

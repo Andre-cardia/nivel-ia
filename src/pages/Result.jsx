@@ -13,7 +13,7 @@ const LEVEL_COLORS = {
  * Result Page — Resultado, nível, recomendações e CTA
  * Implementa: Story 1.4 + envio Supabase (Story 2.2)
  */
-export default function Result({ totalScore, level, dimensionScores, identification, openAnswer, onRestart, survey }) {
+export default function Result({ totalScore, level, dimensionScores, identification, openAnswer, survey }) {
   const [saving, setSaving] = useState(false)
   const [saveError, setSaveError] = useState(null)
   const accentColor = LEVEL_COLORS[level.key] || 'var(--accent)'
@@ -27,10 +27,7 @@ export default function Result({ totalScore, level, dimensionScores, identificat
           .insert({
             survey_id: survey?.id || null,
             company_name: survey ? survey.company_name : identification.companyName,
-            stakeholder_name: survey ? survey.stakeholder_name : identification.stakeholderName,
-            stakeholder_role: survey ? survey.stakeholder_role : (identification.stakeholderRole || null),
-            respondent_name: survey ? identification.stakeholderName : null,
-            respondent_role: survey ? (identification.stakeholderRole || null) : null,
+            respondent_role: identification.stakeholderRole || null,
             respondent_department: identification.stakeholderDepartment || null,
             total_score: totalScore,
             level: level.key,
@@ -75,7 +72,7 @@ export default function Result({ totalScore, level, dimensionScores, identificat
           <span className="eyebrow">Diagnóstico Concluído</span>
           <h1>Seu Resultado</h1>
           <p>
-            {identification.companyName}
+            {survey ? survey.company_name : identification.companyName}
             {identification.stakeholderRole ? ` · ${identification.stakeholderRole}` : ''}
             {identification.stakeholderDepartment ? ` · ${identification.stakeholderDepartment}` : ''}
           </p>
@@ -161,14 +158,6 @@ export default function Result({ totalScore, level, dimensionScores, identificat
           >
             Explorar Treinamentos
           </a>
-          <button
-            id="btn-restart-quiz"
-            className="btn btn-outline"
-            onClick={onRestart}
-            style={{ maxWidth: 320, width: '100%' }}
-          >
-            Refazer Diagnóstico
-          </button>
         </div>
       </div>
     </div>

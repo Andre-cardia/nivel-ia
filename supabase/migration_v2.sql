@@ -18,7 +18,6 @@ CREATE TABLE IF NOT EXISTS surveys (
 -- ── 2. Adicionar colunas em assessments ───────────────────
 ALTER TABLE assessments
   ADD COLUMN IF NOT EXISTS survey_id       UUID REFERENCES surveys(id) ON DELETE SET NULL,
-  ADD COLUMN IF NOT EXISTS respondent_name TEXT,
   ADD COLUMN IF NOT EXISTS respondent_role TEXT;
 
 -- ── 3. View atualizada (inclui survey info) ───────────────

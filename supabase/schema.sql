@@ -6,9 +6,10 @@
 -- ── Tabela principal: um registro por diagnóstico ──────────
 CREATE TABLE IF NOT EXISTS assessments (
   id               UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  survey_id        UUID,
   company_name     TEXT NOT NULL,
-  stakeholder_name TEXT NOT NULL,
-  stakeholder_role TEXT,
+  respondent_role  TEXT,
+  respondent_department TEXT,
   total_score      INTEGER NOT NULL DEFAULT 0,
   level            TEXT NOT NULL DEFAULT 'inicial',
   open_answer      TEXT,

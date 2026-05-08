@@ -51,8 +51,7 @@ export default function SurveyDetail({ onSignOut }) {
   }
 
   async function deleteAssessment(assessment) {
-    const name = assessment.respondent_name || assessment.stakeholder_name || 'este respondente'
-    if (!window.confirm(`Excluir "${name}"?\n\nTodas as respostas deste respondente serão removidas permanentemente.`)) return
+    if (!window.confirm('Excluir este respondente anônimo?\n\nTodas as respostas serão removidas permanentemente.')) return
     setDeletingId(assessment.id)
     if (selected === assessment.id) setSelected(null)
     const { error } = await supabase.from('assessments').delete().eq('id', assessment.id)
@@ -160,8 +159,8 @@ export default function SurveyDetail({ onSignOut }) {
                   <thead>
                     <tr>
                       <th>Data</th>
-                      <th>Nome</th>
                       <th>Cargo</th>
+                      <th>Departamento</th>
                       <th>Pontuação</th>
                       <th>Nível</th>
                       <th>Ações</th>
@@ -172,8 +171,8 @@ export default function SurveyDetail({ onSignOut }) {
                       <Fragment key={a.id}>
                         <tr style={{ opacity: deletingId === a.id ? 0.4 : 1, transition: 'opacity 0.2s' }}>
                           <td className="mono-data">{new Date(a.created_at).toLocaleDateString('pt-BR')}</td>
-                          <td>{a.respondent_name || a.stakeholder_name || '—'}</td>
-                          <td style={{ color: 'var(--muted)', fontSize: '0.8rem' }}>{a.respondent_role || a.stakeholder_role || '—'}</td>
+                          <td style={{ color: 'var(--muted)', fontSize: '0.8rem' }}>{a.respondent_role || '—'}</td>
+                          <td style={{ color: 'var(--muted)', fontSize: '0.8rem' }}>{a.respondent_department || '—'}</td>
                           <td className="mono-data">
                             <span style={{ color: 'var(--accent)' }}>{a.total_score}</span>
                             <span style={{ color: 'var(--muted)' }}>/{maxScore}</span>
