@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import logoNeuralhub from '../assets/logo-neuralhub-sm.png'
 
 /**
  * Landing Page — Hero full-screen com CTA "Iniciar Diagnóstico"
@@ -18,6 +19,11 @@ export default function Landing({ onStart, survey }) {
       <div className="hero-scan-line" style={{ top: '30%' }} />
 
       <div className="container" style={{ position: 'relative', zIndex: 1 }}>
+        {/* Logo */}
+        <div className="animate-rise" style={{ marginBottom: 'var(--s5)' }}>
+          <img src={logoNeuralhub} alt="Neural Hub" style={{ height: 48, objectFit: 'contain' }} />
+        </div>
+
         {/* Eyebrow brand */}
         <p className="hero-brand animate-rise">
           Neural Hub · Diagnóstico Executivo
