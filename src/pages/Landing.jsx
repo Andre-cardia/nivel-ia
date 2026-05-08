@@ -20,8 +20,8 @@ export default function Landing({ onStart, survey }) {
 
       <div className="container" style={{ position: 'relative', zIndex: 1 }}>
         {/* Logo */}
-        <div className="animate-rise" style={{ marginBottom: 'var(--s5)' }}>
-          <img src={logoNeuralhub} alt="Neural Hub" style={{ height: 48, objectFit: 'contain' }} />
+        <div className="animate-rise" style={{ marginBottom: 'var(--s5)', textAlign: 'center' }}>
+          <img src={logoNeuralhub} alt="Neural Hub" style={{ height: 144, objectFit: 'contain' }} />
         </div>
 
         {/* Eyebrow brand */}
