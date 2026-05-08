@@ -6,6 +6,10 @@ export default function Surveys({ onSignOut }) {
   const navigate = useNavigate()
   const [surveys, setSurveys] = useState([])
   const [loading, setLoading] = useState(true)
+  const [editingId, setEditingId] = useState(null)
+  const [editName, setEditName] = useState('')
+  const [savingId, setSavingId] = useState(null)
+  const [deletingId, setDeletingId] = useState(null)
 
   useEffect(() => {
     supabase
@@ -19,18 +23,44 @@ export default function Surveys({ onSignOut }) {
   }, [])
 
   async function toggleActive(survey) {
-    await supabase
-      .from('surveys')
-      .update({ is_active: !survey.is_active })
-      .eq('id', survey.id)
+    await supabase.from('surveys').update({ is_active: !survey.is_active }).eq('id', survey.id)
     setSurveys(prev => prev.map(s => s.id === survey.id ? { ...s, is_active: !s.is_active } : s))
+  }
+
+  function startEdit(survey) {
+    setEditingId(survey.id)
+    setEditName(survey.company_name)
+  }
+
+  function cancelEdit() {
+    setEditingId(null)
+    setEditName('')
+  }
+
+  async function saveEdit(id) {
+    const name = editName.trim()
+    if (!name) return
+    setSavingId(id)
+    const { error } = await supabase.from('surveys').update({ company_name: name }).eq('id', id)
+    if (!error) {
+      setSurveys(prev => prev.map(s => s.id === id ? { ...s, company_name: name } : s))
+      setEditingId(null)
+    }
+    setSavingId(null)
+  }
+
+  async function deleteSurvey(survey) {
+    if (!window.confirm(`Excluir a empresa "${survey.company_name}"?\n\nTodos os respondentes e respostas serão removidos permanentemente.`)) return
+    setDeletingId(survey.id)
+    const { error } = await supabase.from('surveys').delete().eq('id', survey.id)
+    if (!error) setSurveys(prev => prev.filter(s => s.id !== survey.id))
+    setDeletingId(null)
   }
 
   const surveyLink = (token) => `${window.location.origin}/q/${token}`
 
   return (
     <div className="admin-layout">
-      {/* Sidebar */}
       <aside className="admin-sidebar">
         <div style={{ marginBottom: 'var(--s6)' }}>
           <div className="brand-logo">
@@ -55,11 +85,9 @@ export default function Surveys({ onSignOut }) {
         </div>
       </aside>
 
-      {/* Main */}
       <main className="admin-main">
         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--s8)' }}>
 
-          {/* Header */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 'var(--s4)' }}>
             <div>
               <span className="eyebrow">Pesquisas por Empresa</span>
@@ -70,7 +98,6 @@ export default function Surveys({ onSignOut }) {
             </button>
           </div>
 
-          {/* Table */}
           <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
             <div style={{ padding: 'var(--s5) var(--s6)', borderBottom: '1px solid var(--line)' }}>
               <span className="eyebrow">Empresas cadastradas</span>
@@ -106,8 +133,44 @@ export default function Surveys({ onSignOut }) {
                   </thead>
                   <tbody>
                     {surveys.map(s => (
-                      <tr key={s.id}>
-                        <td style={{ fontWeight: 600 }}>{s.company_name}</td>
+                      <tr key={s.id} style={{ opacity: deletingId === s.id ? 0.4 : 1, transition: 'opacity 0.2s' }}>
+                        <td style={{ fontWeight: 600, minWidth: 160 }}>
+                          {editingId === s.id ? (
+                            <div style={{ display: 'flex', gap: 'var(--s2)', alignItems: 'center' }}>
+                              <input
+                                className="input-field"
+                                style={{ fontSize: '0.85rem', minHeight: 32, padding: '4px 10px', width: 180 }}
+                                value={editName}
+                                onChange={e => setEditName(e.target.value)}
+                                onKeyDown={e => { if (e.key === 'Enter') saveEdit(s.id); if (e.key === 'Escape') cancelEdit() }}
+                                autoFocus
+                              />
+                              <button
+                                className="btn btn-primary"
+                                style={{ fontSize: '0.65rem', minHeight: 28, padding: '0 10px' }}
+                                onClick={() => saveEdit(s.id)}
+                                disabled={savingId === s.id}
+                              >
+                                {savingId === s.id ? '…' : 'Salvar'}
+                              </button>
+                              <button
+                                className="btn btn-outline"
+                                style={{ fontSize: '0.65rem', minHeight: 28, padding: '0 8px' }}
+                                onClick={cancelEdit}
+                              >
+                                ✕
+                              </button>
+                            </div>
+                          ) : (
+                            <span
+                              title="Clique para editar"
+                              style={{ cursor: 'pointer' }}
+                              onClick={() => startEdit(s)}
+                            >
+                              {s.company_name}
+                            </span>
+                          )}
+                        </td>
                         <td>
                           <span>{s.stakeholder_name}</span>
                           {s.stakeholder_role && <span style={{ display: 'block', fontSize: '0.75rem', color: 'var(--muted)' }}>{s.stakeholder_role}</span>}
@@ -135,7 +198,7 @@ export default function Surveys({ onSignOut }) {
                           {new Date(s.created_at).toLocaleDateString('pt-BR')}
                         </td>
                         <td>
-                          <div style={{ display: 'flex', gap: 'var(--s2)' }}>
+                          <div style={{ display: 'flex', gap: 'var(--s2)', flexWrap: 'wrap' }}>
                             <button
                               className="btn btn-outline"
                               style={{ fontSize: '0.7rem', minHeight: 30, padding: '0 12px' }}
@@ -149,6 +212,14 @@ export default function Surveys({ onSignOut }) {
                               onClick={() => toggleActive(s)}
                             >
                               {s.is_active ? 'Desativar' : 'Ativar'}
+                            </button>
+                            <button
+                              className="btn btn-outline"
+                              style={{ fontSize: '0.7rem', minHeight: 30, padding: '0 12px', color: 'var(--error)' }}
+                              onClick={() => deleteSurvey(s)}
+                              disabled={deletingId === s.id}
+                            >
+                              Excluir
                             </button>
                           </div>
                         </td>

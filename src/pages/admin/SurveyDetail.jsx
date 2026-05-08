@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
-import { LEVELS, DIMENSION_LABELS } from '../../lib/scoring'
+import { LEVELS, DIMENSION_LABELS, DIMENSION_MAX } from '../../lib/scoring'
 
 const LEVEL_COLORS = {
   inicial: 'var(--muted)',
@@ -22,6 +22,7 @@ export default function SurveyDetail({ onSignOut }) {
   const [loading, setLoading] = useState(true)
   const [selected, setSelected] = useState(null)
   const [dimScores, setDimScores] = useState({})
+  const [deletingId, setDeletingId] = useState(null)
 
   useEffect(() => {
     async function load() {
@@ -48,6 +49,18 @@ export default function SurveyDetail({ onSignOut }) {
     }
     setSelected(aId)
   }
+
+  async function deleteAssessment(assessment) {
+    const name = assessment.respondent_name || assessment.stakeholder_name || 'este respondente'
+    if (!window.confirm(`Excluir "${name}"?\n\nTodas as respostas deste respondente serão removidas permanentemente.`)) return
+    setDeletingId(assessment.id)
+    if (selected === assessment.id) setSelected(null)
+    const { error } = await supabase.from('assessments').delete().eq('id', assessment.id)
+    if (!error) setAssessments(prev => prev.filter(a => a.id !== assessment.id))
+    setDeletingId(null)
+  }
+
+  const maxScore = LEVELS[LEVELS.length - 1].max
 
   const avgScore = assessments.length
     ? Math.round(assessments.reduce((s, a) => s + a.total_score, 0) / assessments.length)
@@ -125,7 +138,7 @@ export default function SurveyDetail({ onSignOut }) {
               <div className="card" style={{ textAlign: 'center' }}>
                 <p className="eyebrow" style={{ marginBottom: 'var(--s2)' }}>Média da Empresa</p>
                 <p style={{ fontFamily: 'var(--font-mono)', fontSize: '2rem', fontWeight: 700, color: 'var(--accent)' }}>
-                  {avgScore}<span style={{ fontSize: '1rem', color: 'var(--muted)' }}>/75</span>
+                  {avgScore}<span style={{ fontSize: '1rem', color: 'var(--muted)' }}>/{maxScore}</span>
                 </p>
               </div>
             )}
@@ -151,19 +164,19 @@ export default function SurveyDetail({ onSignOut }) {
                       <th>Cargo</th>
                       <th>Pontuação</th>
                       <th>Nível</th>
-                      <th>Detalhe</th>
+                      <th>Ações</th>
                     </tr>
                   </thead>
                   <tbody>
                     {assessments.map(a => (
                       <Fragment key={a.id}>
-                        <tr>
+                        <tr style={{ opacity: deletingId === a.id ? 0.4 : 1, transition: 'opacity 0.2s' }}>
                           <td className="mono-data">{new Date(a.created_at).toLocaleDateString('pt-BR')}</td>
                           <td>{a.respondent_name || a.stakeholder_name || '—'}</td>
                           <td style={{ color: 'var(--muted)', fontSize: '0.8rem' }}>{a.respondent_role || a.stakeholder_role || '—'}</td>
                           <td className="mono-data">
                             <span style={{ color: 'var(--accent)' }}>{a.total_score}</span>
-                            <span style={{ color: 'var(--muted)' }}>/75</span>
+                            <span style={{ color: 'var(--muted)' }}>/{maxScore}</span>
                           </td>
                           <td>
                             <span className="badge" style={{ background: 'transparent', color: LEVEL_COLORS[a.level], border: `1px solid ${LEVEL_COLORS[a.level]}40` }}>
@@ -171,13 +184,23 @@ export default function SurveyDetail({ onSignOut }) {
                             </span>
                           </td>
                           <td>
-                            <button
-                              className="btn btn-outline"
-                              style={{ fontSize: '0.7rem', minHeight: 30, padding: '0 12px' }}
-                              onClick={() => selected === a.id ? setSelected(null) : loadDim(a.id)}
-                            >
-                              {selected === a.id ? 'Fechar' : 'Ver'}
-                            </button>
+                            <div style={{ display: 'flex', gap: 'var(--s2)' }}>
+                              <button
+                                className="btn btn-outline"
+                                style={{ fontSize: '0.7rem', minHeight: 30, padding: '0 12px' }}
+                                onClick={() => selected === a.id ? setSelected(null) : loadDim(a.id)}
+                              >
+                                {selected === a.id ? 'Fechar' : 'Ver'}
+                              </button>
+                              <button
+                                className="btn btn-outline"
+                                style={{ fontSize: '0.7rem', minHeight: 30, padding: '0 12px', color: 'var(--error)' }}
+                                onClick={() => deleteAssessment(a)}
+                                disabled={deletingId === a.id}
+                              >
+                                Excluir
+                              </button>
+                            </div>
                           </td>
                         </tr>
                         {selected === a.id && dimScores[a.id] && (
@@ -186,7 +209,7 @@ export default function SurveyDetail({ onSignOut }) {
                               <p className="eyebrow" style={{ marginBottom: 'var(--s4)' }}>Pontuação por Dimensão</p>
                               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 'var(--s4)' }}>
                                 {Object.entries(dimScores[a.id]).map(([dim, score]) => {
-                                  const max = dim === 'maturidade_executiva' ? 12 : 9
+                                  const max = DIMENSION_MAX[dim] ?? 3
                                   return (
                                     <div key={dim}>
                                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>

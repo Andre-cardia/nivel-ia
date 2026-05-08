@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
-import { DIMENSION_LABELS } from '../lib/scoring'
+import { DIMENSION_LABELS, DIMENSION_MAX, MAX_SCORE } from '../lib/scoring'
 
 const LEVEL_COLORS = {
   inicial:       'var(--muted)',
@@ -31,6 +31,7 @@ export default function Result({ totalScore, level, dimensionScores, identificat
             stakeholder_role: survey ? survey.stakeholder_role : (identification.stakeholderRole || null),
             respondent_name: survey ? identification.stakeholderName : null,
             respondent_role: survey ? (identification.stakeholderRole || null) : null,
+            respondent_department: identification.stakeholderDepartment || null,
             total_score: totalScore,
             level: level.key,
             open_answer: openAnswer || null,
@@ -84,7 +85,7 @@ export default function Result({ totalScore, level, dimensionScores, identificat
           <p className="eyebrow" style={{ marginBottom: 'var(--s3)' }}>Pontuação Total</p>
           <div className="metric-display">
             {totalScore}
-            <span className="metric-total">/ 75</span>
+            <span className="metric-total">/ {MAX_SCORE}</span>
           </div>
         </div>
 
@@ -111,7 +112,7 @@ export default function Result({ totalScore, level, dimensionScores, identificat
           <p className="eyebrow" style={{ marginBottom: 'var(--s5)' }}>Por Dimensão</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--s4)' }}>
             {Object.entries(dimensionScores).map(([dim, score]) => {
-              const max = dim === 'maturidade_executiva' ? 12 : 9
+              const max = DIMENSION_MAX[dim]
               const pct = Math.round((score / max) * 100)
               return (
                 <div key={dim}>
