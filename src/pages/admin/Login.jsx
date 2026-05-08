@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 
 /**
@@ -8,6 +9,7 @@ export default function AdminLogin() {
   const [form, setForm] = useState({ email: '', password: '' })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const navigate = useNavigate()
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -17,8 +19,12 @@ export default function AdminLogin() {
       email: form.email,
       password: form.password,
     })
-    if (authError) setError(authError.message)
-    setLoading(false)
+    if (authError) {
+      setError(authError.message)
+      setLoading(false)
+    } else {
+      navigate('/admin')
+    }
   }
 
   return (

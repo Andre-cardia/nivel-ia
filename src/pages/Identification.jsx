@@ -4,9 +4,9 @@ import { useState } from 'react'
  * Identification Page — Formulário de empresa + stakeholder
  * Implementa: Story 1.1 AC3, AC4 e AC5
  */
-export default function Identification({ onSubmit }) {
+export default function Identification({ onSubmit, survey }) {
   const [form, setForm] = useState({
-    companyName: '',
+    companyName: survey?.company_name || '',
     stakeholderName: '',
     stakeholderRole: '',
   })
@@ -49,8 +49,11 @@ export default function Identification({ onSubmit }) {
             Sobre você e sua empresa
           </h1>
           <p style={{ maxWidth: 400, margin: '0 auto' }}>
-            Essas informações serão usadas para associar o resultado
-            ao seu perfil executivo. Nenhum dado é compartilhado sem consentimento.
+            {survey ? (
+              <>Você foi convidado(a) a responder este diagnóstico pela empresa <strong>{survey.company_name}</strong>. Por favor, identifique-se abaixo.</>
+            ) : (
+              <>Essas informações serão usadas para associar o resultado ao seu perfil executivo. Nenhum dado é compartilhado sem consentimento.</>
+            )}
           </p>
         </div>
 
@@ -72,7 +75,9 @@ export default function Identification({ onSubmit }) {
               value={form.companyName}
               onChange={handleChange}
               autoComplete="organization"
-              autoFocus
+              autoFocus={!survey}
+              disabled={!!survey}
+              style={survey ? { background: 'var(--panel-2)', color: 'var(--muted)', cursor: 'not-allowed' } : {}}
             />
             {errors.companyName && (
               <span className="input-error" role="alert">{errors.companyName}</span>

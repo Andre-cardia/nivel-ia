@@ -4,7 +4,7 @@ import { useState } from 'react'
  * Landing Page — Hero full-screen com CTA "Iniciar Diagnóstico"
  * Implementa: Story 1.1 AC1 e AC2
  */
-export default function Landing({ onStart }) {
+export default function Landing({ onStart, survey }) {
   const [entering, setEntering] = useState(false)
 
   function handleStart() {
@@ -25,7 +25,7 @@ export default function Landing({ onStart }) {
 
         {/* Main headline */}
         <h1 className="hero-title animate-rise" style={{ animationDelay: '80ms' }}>
-          Qual é o <em>Nível IA</em> da<br />sua empresa?
+          Qual é o <em>Nível IA</em> da<br />{survey ? survey.company_name : 'sua empresa'}?
         </h1>
 
         {/* Sub-headline */}

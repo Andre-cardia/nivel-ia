@@ -13,7 +13,7 @@ const LEVEL_COLORS = {
  * Result Page — Resultado, nível, recomendações e CTA
  * Implementa: Story 1.4 + envio Supabase (Story 2.2)
  */
-export default function Result({ totalScore, level, dimensionScores, identification, openAnswer, onRestart }) {
+export default function Result({ totalScore, level, dimensionScores, identification, openAnswer, onRestart, survey }) {
   const [saving, setSaving] = useState(false)
   const [saveError, setSaveError] = useState(null)
   const accentColor = LEVEL_COLORS[level.key] || 'var(--accent)'
@@ -25,9 +25,12 @@ export default function Result({ totalScore, level, dimensionScores, identificat
         const { data: assessment, error: assessmentError } = await supabase
           .from('assessments')
           .insert({
-            company_name: identification.companyName,
-            stakeholder_name: identification.stakeholderName,
-            stakeholder_role: identification.stakeholderRole || null,
+            survey_id: survey?.id || null,
+            company_name: survey ? survey.company_name : identification.companyName,
+            stakeholder_name: survey ? survey.stakeholder_name : identification.stakeholderName,
+            stakeholder_role: survey ? survey.stakeholder_role : (identification.stakeholderRole || null),
+            respondent_name: survey ? identification.stakeholderName : null,
+            respondent_role: survey ? (identification.stakeholderRole || null) : null,
             total_score: totalScore,
             level: level.key,
             open_answer: openAnswer || null,
