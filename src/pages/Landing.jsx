@@ -20,12 +20,12 @@ export default function Landing({ onStart, survey }) {
       <div className="container" style={{ position: 'relative', zIndex: 1 }}>
         {/* Eyebrow brand */}
         <p className="hero-brand animate-rise">
-          Mentoria IA · Diagnóstico Executivo
+          Neural Hub · Diagnóstico Executivo
         </p>
 
         {/* Main headline */}
         <h1 className="hero-title animate-rise" style={{ animationDelay: '80ms' }}>
-          Qual é o <em>Nível IA</em> da<br />{survey ? survey.company_name : 'sua empresa'}?
+          Qual é o <em>Nível de Conhecimento de Inteligência Artificial</em> da<br />{survey ? survey.company_name : 'sua empresa'}?
         </h1>
 
         {/* Sub-headline */}
@@ -50,8 +50,6 @@ export default function Landing({ onStart, survey }) {
         <div className="hero-meta animate-rise" style={{ animationDelay: '320ms' }}>
           <span className="hero-meta-item">25 questões objetivas</span>
           <span className="hero-meta-item">10 a 15 minutos</span>
-          <span className="hero-meta-item">Resultado imediato</span>
-          <span className="hero-meta-item">Gratuito</span>
         </div>
       </div>
     </section>
