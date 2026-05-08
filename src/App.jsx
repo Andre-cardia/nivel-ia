@@ -118,7 +118,7 @@ function AdminRoute() {
 /* ── Root ────────────────────────────────────────────────── */
 export default function App() {
   return (
-    <BrowserRouter basename="/diagnostico">
+    <BrowserRouter>
       <Routes>
         {/* Public quiz — only via tokenized link */}
         <Route path="/q/:token" element={<QuizApp />} />
