@@ -18,6 +18,7 @@ export function useQuiz() {
     companyName: '',
     stakeholderName: '',
     stakeholderRole: '',
+    stakeholderDepartment: '',
   })
   const [openAnswer, setOpenAnswer] = useState('')
 
@@ -64,7 +65,7 @@ export function useQuiz() {
     setStep('landing')
     setCurrentQuestion(0)
     setAnswers({})
-    setIdentification({ companyName: '', stakeholderName: '', stakeholderRole: '' })
+    setIdentification({ companyName: '', stakeholderName: '', stakeholderRole: '', stakeholderDepartment: '' })
     setOpenAnswer('')
   }, [])
 

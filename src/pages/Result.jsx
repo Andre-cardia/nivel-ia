@@ -75,8 +75,9 @@ export default function Result({ totalScore, level, dimensionScores, identificat
           <span className="eyebrow">Diagnóstico Concluído</span>
           <h1>Seu Resultado</h1>
           <p>
-            {identification.stakeholderName} · {identification.companyName}
+            {identification.companyName}
             {identification.stakeholderRole ? ` · ${identification.stakeholderRole}` : ''}
+            {identification.stakeholderDepartment ? ` · ${identification.stakeholderDepartment}` : ''}
           </p>
         </div>
 
