@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { DIMENSION_LABELS, DIMENSION_MAX, MAX_SCORE } from '../lib/scoring'
 
@@ -15,54 +15,53 @@ const LEVEL_COLORS = {
  */
 export default function Result({ totalScore, level, dimensionScores, identification, openAnswer, survey }) {
   const [saving, setSaving] = useState(false)
+  const [saved, setSaved] = useState(false)
   const [saveError, setSaveError] = useState(null)
   const accentColor = LEVEL_COLORS[level.key] || 'var(--accent)'
 
-  useEffect(() => {
-    async function saveAssessment() {
-      setSaving(true)
-      try {
-        const { data: assessment, error: assessmentError } = await supabase
-          .from('assessments')
-          .insert({
-            survey_id: survey?.id || null,
-            company_name: survey ? survey.company_name : identification.companyName,
-            respondent_role: identification.stakeholderRole || null,
-            respondent_department: identification.stakeholderDepartment || null,
-            total_score: totalScore,
-            level: level.key,
-            open_answer: openAnswer || null,
-          })
-          .select()
-          .single()
+  async function handleSave() {
+    if (saving || saved) return
+    setSaving(true)
+    setSaveError(null)
+    try {
+      const { data: assessment, error: assessmentError } = await supabase
+        .from('assessments')
+        .insert({
+          survey_id: survey?.id || null,
+          company_name: survey ? survey.company_name : identification.companyName,
+          respondent_role: identification.stakeholderRole || null,
+          respondent_department: identification.stakeholderDepartment || null,
+          total_score: totalScore,
+          level: level.key,
+          open_answer: openAnswer || null,
+        })
+        .select()
+        .single()
 
-        if (assessmentError) throw assessmentError
+      if (assessmentError) throw assessmentError
 
-        // Insert dimension scores as individual answer rows (simplified: one row per dimension)
-        const dimensionRows = Object.entries(dimensionScores).map(([dim, score]) => ({
-          assessment_id: assessment.id,
-          question_number: 0,
-          dimension: dim,
-          selected_option: '-',
-          score,
-        }))
+      const dimensionRows = Object.entries(dimensionScores).map(([dim, score]) => ({
+        assessment_id: assessment.id,
+        question_number: 0,
+        dimension: dim,
+        selected_option: '-',
+        score,
+      }))
 
-        const { error: dimError } = await supabase
-          .from('assessment_answers')
-          .insert(dimensionRows)
+      const { error: dimError } = await supabase
+        .from('assessment_answers')
+        .insert(dimensionRows)
 
-        if (dimError) console.warn('[supabase] dimension insert error:', dimError)
-      } catch (err) {
-        console.error('[supabase] save error:', err)
-        setSaveError(err.message)
-      } finally {
-        setSaving(false)
-      }
+      if (dimError) console.warn('[supabase] dimension insert error:', dimError)
+
+      setSaved(true)
+    } catch (err) {
+      console.error('[supabase] save error:', err)
+      setSaveError(err.message)
+    } finally {
+      setSaving(false)
     }
-
-    saveAssessment()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }
 
   return (
     <div className="result-page">
@@ -134,17 +133,29 @@ export default function Result({ totalScore, level, dimensionScores, identificat
           </div>
         </div>
 
-        {/* Saving indicator */}
-        {saving && (
-          <p style={{ textAlign: 'center', color: 'var(--muted)', fontSize: '0.75rem', fontFamily: 'var(--font-mono)' }}>
-            Salvando resultado...
-          </p>
-        )}
-        {saveError && (
-          <p style={{ textAlign: 'center', color: 'var(--error)', fontSize: '0.75rem', fontFamily: 'var(--font-mono)' }}>
-            Não foi possível salvar o resultado no servidor.
-          </p>
-        )}
+        {/* Save button */}
+        <div className="animate-rise" style={{ animationDelay: '300ms', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--s2)' }}>
+          {!saved ? (
+            <button
+              id="btn-save-result"
+              className="btn btn-outline"
+              onClick={handleSave}
+              disabled={saving}
+              style={{ width: '100%', maxWidth: 320 }}
+            >
+              {saving ? 'Salvando...' : 'Confirmar e Salvar Resultado'}
+            </button>
+          ) : (
+            <p style={{ textAlign: 'center', color: 'var(--green)', fontSize: '0.85rem', fontFamily: 'var(--font-mono)' }}>
+              ✓ Resultado salvo com sucesso
+            </p>
+          )}
+          {saveError && (
+            <p style={{ textAlign: 'center', color: 'var(--error, #f87171)', fontSize: '0.75rem', fontFamily: 'var(--font-mono)' }}>
+              Erro ao salvar. <button onClick={handleSave} style={{ background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', fontFamily: 'var(--font-mono)', fontSize: '0.75rem', padding: 0 }}>Tentar novamente</button>
+            </p>
+          )}
+        </div>
 
         {/* CTAs */}
         <div className="result-cta animate-rise" style={{ animationDelay: '320ms', display: 'flex', flexDirection: 'column', gap: 'var(--s3)', alignItems: 'center' }}>
