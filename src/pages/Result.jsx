@@ -34,6 +34,7 @@ export default function Result({ totalScore, level, dimensionScores, identificat
           id: assessmentId,
           survey_id: survey?.id || null,
           company_name: survey ? survey.company_name : identification.companyName,
+          stakeholder_name: '',
           respondent_role: identification.stakeholderRole || null,
           respondent_department: identification.stakeholderDepartment || null,
           total_score: totalScore,
