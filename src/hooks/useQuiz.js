@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react'
 import { QUESTIONS } from '../data/questions'
 import {
   calculateTotalScore,
+  calculateObjectiveScore,
   calculateDimensionScores,
   determineLevel,
 } from '../lib/scoring'
@@ -24,8 +25,9 @@ export function useQuiz() {
 
   // Derived state
   const totalScore = calculateTotalScore(answers)
+  const objectiveScore = calculateObjectiveScore(answers)
   const dimensionScores = calculateDimensionScores(answers)
-  const level = determineLevel(totalScore)
+  const level = determineLevel(totalScore, objectiveScore)
   const progress = (currentQuestion / QUESTIONS.length) * 100
 
   // ── Actions ─────────────────────────────────────────────
