@@ -24,9 +24,14 @@ export default function Result({ totalScore, level, dimensionScores, identificat
     setSaving(true)
     setSaveError(null)
     try {
-      const { data: assessment, error: assessmentError } = await supabase
+      // UUID gerado no cliente para não depender de SELECT após INSERT
+      // (RLS bloqueia SELECT para usuários anônimos)
+      const assessmentId = crypto.randomUUID()
+
+      const { error: assessmentError } = await supabase
         .from('assessments')
         .insert({
+          id: assessmentId,
           survey_id: survey?.id || null,
           company_name: survey ? survey.company_name : identification.companyName,
           respondent_role: identification.stakeholderRole || null,
@@ -35,13 +40,11 @@ export default function Result({ totalScore, level, dimensionScores, identificat
           level: level.key,
           open_answer: openAnswer || null,
         })
-        .select()
-        .single()
 
       if (assessmentError) throw assessmentError
 
       const dimensionRows = Object.entries(dimensionScores).map(([dim, score]) => ({
-        assessment_id: assessment.id,
+        assessment_id: assessmentId,
         question_number: 0,
         dimension: dim,
         selected_option: '-',
@@ -52,7 +55,7 @@ export default function Result({ totalScore, level, dimensionScores, identificat
         .from('assessment_answers')
         .insert(dimensionRows)
 
-      if (dimError) console.warn('[supabase] dimension insert error:', dimError)
+      if (dimError) throw dimError
 
       setSaved(true)
     } catch (err) {
