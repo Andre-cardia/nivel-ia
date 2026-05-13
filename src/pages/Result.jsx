@@ -7,6 +7,7 @@ const LEVEL_COLORS = {
   basico:        'var(--accent)',
   intermediario: 'var(--green)',
   avancado:      '#a78bfa',
+  estrategico:   '#f59e0b',
 }
 
 /**
