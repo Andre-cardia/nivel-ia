@@ -1,24 +1,37 @@
 /**
- * questions.js — 43 questões do Assessment de Maturidade Executiva em IA
- * Parte 1 (Q1-Q35): questões objetivas de conhecimento aplicado
- * Parte 2 (Q36-Q43): questões de maturidade, frequência e percepção
+ * questions.js — 34 questões do Diagnóstico de IA
+ * Perfil de Uso (Q1-Q2): escala progressiva de comportamento
+ * Conhecimento (Q3-Q34): questões objetivas com resposta correta
  */
 
 export const QUESTIONS = [
-  // ── 1. Fundamentos de IA (Q1-Q4) ─────────────────────────
+  // ── Perfil de Uso (Q1-Q2) ────────────────────────────────
   {
     id: 1,
-    dimension: 'fundamentos_ia',
-    text: 'Uma empresa possui diferentes níveis de maturidade digital entre áreas e dados parcialmente organizados. Qual abordagem tende a gerar maior valor sustentável com IA?',
+    dimension: 'perfil_uso',
+    text: 'Com que frequência o colaborador utiliza IA no trabalho?',
     options: {
-      A: 'Priorizar casos de uso com governança e evolução progressiva de dados e processos.',
-      B: 'Concentrar IA apenas em áreas com maior maturidade técnica.',
-      C: 'Criar aplicações isoladas para gerar ganhos rápidos de eficiência.',
-      D: 'Expandir rapidamente iniciativas de IA para acelerar aprendizado organizacional.',
+      A: 'Nunca utiliza.',
+      B: 'Utiliza raramente (ocasionalmente).',
+      C: 'Utiliza semanalmente.',
+      D: 'Utiliza diariamente (todos os dias ou várias vezes ao dia).',
     },
   },
   {
     id: 2,
+    dimension: 'perfil_uso',
+    text: 'Você utiliza algum assistente de IA de forma recorrente no trabalho?',
+    options: {
+      A: 'Não utilizo IA no trabalho.',
+      B: 'Utilizo IA apenas de forma pontual (ex: perguntas ocasionais em ferramentas como ChatGPT ou similares).',
+      C: 'Utilizo IA com frequência, mas sem um fluxo estruturado ou assistente definido.',
+      D: 'Utilizo um assistente de IA como parte do meu trabalho (uso recorrente e integrado às minhas atividades).',
+    },
+  },
+
+  // ── Fundamentos de IA (Q3-Q5) ────────────────────────────
+  {
+    id: 3,
     dimension: 'fundamentos_ia',
     text: 'Qual cenário melhor representa a evolução de automações tradicionais para soluções baseadas em IA?',
     options: {
@@ -29,7 +42,7 @@ export const QUESTIONS = [
     },
   },
   {
-    id: 3,
+    id: 4,
     dimension: 'fundamentos_ia',
     text: 'Qual abordagem representa adoção mais sustentável de IA?',
     options: {
@@ -40,7 +53,7 @@ export const QUESTIONS = [
     },
   },
   {
-    id: 4,
+    id: 5,
     dimension: 'fundamentos_ia',
     text: 'Qual cenário representa uso mais maduro de IA em ambiente corporativo?',
     options: {
@@ -51,9 +64,9 @@ export const QUESTIONS = [
     },
   },
 
-  // ── 2. IA Generativa (Q5-Q8) ──────────────────────────────
+  // ── IA Generativa (Q6-Q9) ────────────────────────────────
   {
-    id: 5,
+    id: 6,
     dimension: 'ia_generativa',
     text: 'Qual papel representa melhor o uso corporativo maduro de IA generativa?',
     options: {
@@ -64,7 +77,7 @@ export const QUESTIONS = [
     },
   },
   {
-    id: 6,
+    id: 7,
     dimension: 'ia_generativa',
     text: 'Qual cenário indica maior maturidade no uso de IA generativa?',
     options: {
@@ -75,18 +88,18 @@ export const QUESTIONS = [
     },
   },
   {
-    id: 7,
+    id: 8,
     dimension: 'ia_generativa',
     text: 'Como modelos de linguagem funcionam principalmente?',
     options: {
-      A: 'Recuperam respostas prontas de bases de conhecimento pré-definidas.',
-      B: 'Aplicam regras linguísticas programadas manualmente para cada pergunta.',
-      C: 'Predizem respostas com base em contexto e padrões aprendidos durante o treinamento.',
-      D: 'Localizam respostas exatas em bancos de dados internos.',
+      A: 'Recuperam respostas de bases de conhecimento pré-definidas.',
+      B: 'Aplicam regras linguísticas programadas previamente.',
+      C: 'Predizem respostas com base em contexto e padrões aprendidos.',
+      D: 'Combinam padrões estatísticos com grandes volumes de dados.',
     },
   },
   {
-    id: 8,
+    id: 9,
     dimension: 'ia_generativa',
     text: 'Uma organização quer usar IA generativa em processos internos. Qual abordagem tende a reduzir risco sem limitar valor?',
     options: {
@@ -97,9 +110,9 @@ export const QUESTIONS = [
     },
   },
 
-  // ── 3. Uso Prático (Q9-Q12) ───────────────────────────────
+  // ── Uso Prático (Q10-Q12) ────────────────────────────────
   {
-    id: 9,
+    id: 10,
     dimension: 'uso_pratico',
     text: 'Qual cenário representa uso mais maduro de IA no trabalho?',
     options: {
@@ -110,7 +123,7 @@ export const QUESTIONS = [
     },
   },
   {
-    id: 10,
+    id: 11,
     dimension: 'uso_pratico',
     text: 'Qual abordagem tende a gerar melhores resultados ao interagir com IA?',
     options: {
@@ -121,29 +134,18 @@ export const QUESTIONS = [
     },
   },
   {
-    id: 11,
-    dimension: 'uso_pratico',
-    text: 'Qual cenário indica maior maturidade organizacional no uso de IA?',
-    options: {
-      A: 'Uso diferente entre áreas sem coordenação.',
-      B: 'Uso informal sem padrões definidos.',
-      C: 'Uso padronizado com métricas, governança e melhoria contínua.',
-      D: 'Uso com diretrizes gerais e alinhamento parcial.',
-    },
-  },
-  {
     id: 12,
     dimension: 'uso_pratico',
     text: 'Uma equipe recebe respostas inconsistentes da IA. Qual ação tende a melhorar a qualidade dos resultados?',
     options: {
-      A: 'Refinar contexto, critérios e restrições da solicitação.',
-      B: 'Utilizar prompts padronizados em todas as situações.',
-      C: 'Repetir a mesma solicitação até obter resposta adequada.',
-      D: 'Reduzir a complexidade das perguntas.',
+      A: 'Aprimorar o contexto fornecido, explicitar critérios de sucesso e adicionar restrições operacionais claras na solicitação.',
+      B: 'Padronizar rigidamente todos os prompts em um único template, independentemente do tipo de tarefa ou objetivo.',
+      C: 'Repetir a mesma solicitação múltiplas vezes, assumindo que a variabilidade estatística do modelo converge para a resposta ideal.',
+      D: 'Simplificar sistematicamente as perguntas, reduzindo escopo, variáveis e níveis de abstração envolvidos na instrução.',
     },
   },
 
-  // ── 4. Dados e Decisão (Q13-Q16) ─────────────────────────
+  // ── Dados & Decisão (Q13-Q16) ────────────────────────────
   {
     id: 13,
     dimension: 'dados_decisao',
@@ -161,7 +163,7 @@ export const QUESTIONS = [
     text: 'Como IA deve ser utilizada na tomada de decisão?',
     options: {
       A: 'Como suporte estruturado com validação humana e governança.',
-      B: 'Como apoio informal para acelerar análises.',
+      B: 'Como apoio para acelerar análises.',
       C: 'Automatizando decisões sempre que possível.',
       D: 'Como suporte em decisões operacionais específicas.',
     },
@@ -184,12 +186,12 @@ export const QUESTIONS = [
     options: {
       A: 'Aumentar volume de dados utilizados.',
       B: 'Melhorar qualidade, estrutura e governança dos dados.',
-      C: 'Reduzir variáveis para simplificar análises.',
+      C: 'Aplicar seleção de variáveis para otimizar o modelo.',
       D: 'Adotar modelos maiores e mais avançados.',
     },
   },
 
-  // ── 5. Estratégia (Q17-Q20) ───────────────────────────────
+  // ── Estratégia (Q17-Q20) ─────────────────────────────────
   {
     id: 17,
     dimension: 'estrategia',
@@ -220,7 +222,7 @@ export const QUESTIONS = [
       A: 'Alinhamento operacional com metas específicas.',
       B: 'Iniciativas independentes por área.',
       C: 'Integração direta com estratégia organizacional.',
-      D: 'Alinhamento informal entre algumas equipes.',
+      D: 'Alinhamento entre algumas equipes.',
     },
   },
   {
@@ -229,26 +231,15 @@ export const QUESTIONS = [
     text: 'Como organizações maduras identificam oportunidades de IA?',
     options: {
       A: 'De forma contínua alinhada à estratégia e geração de valor.',
-      B: 'Com base em iniciativas isoladas das áreas.',
+      B: 'Com base em iniciativas das áreas.',
       C: 'Conforme surgem demandas operacionais.',
       D: 'A partir de projetos específicos de transformação.',
     },
   },
 
-  // ── 6. Riscos, Ética e Governança (Q21-Q24) ──────────────
+  // ── Riscos & Ética (Q21-Q23) ─────────────────────────────
   {
     id: 21,
-    dimension: 'riscos_etica',
-    text: 'Qual abordagem representa maior maturidade em governança de IA?',
-    options: {
-      A: 'Delegar responsabilidade para cada área.',
-      B: 'Implementar políticas, monitoramento e governança estruturada.',
-      C: 'Aplicar diretrizes gerais sem monitoramento contínuo.',
-      D: 'Resolver riscos conforme surgem na operação.',
-    },
-  },
-  {
-    id: 22,
     dimension: 'riscos_etica',
     text: 'O que caracteriza uma "alucinação" em IA?',
     options: {
@@ -259,31 +250,31 @@ export const QUESTIONS = [
     },
   },
   {
-    id: 23,
+    id: 22,
     dimension: 'riscos_etica',
     text: 'Como dados sensíveis devem ser utilizados em IA?',
     options: {
       A: 'Com governança formal, anonimização e controle de acesso.',
-      B: 'Seguindo boas práticas definidas informalmente.',
-      C: 'Com restrições internas parcialmente estruturadas.',
-      D: 'Conforme necessidade operacional de cada equipe.',
+      B: 'Com diretrizes de uso e controles aplicados apenas em etapas críticas do fluxo de dados.',
+      C: 'Com políticas internas de proteção e validação aplicadas conforme o tipo de caso de uso.',
+      D: 'Com regras definidas por cada área, respeitando restrições operacionais e contexto de negócio.',
     },
   },
   {
-    id: 24,
+    id: 23,
     dimension: 'riscos_etica',
     text: 'Qual cenário representa uso mais seguro de IA em decisões críticas?',
     options: {
       A: 'Uso de IA apenas como consulta informal.',
-      B: 'Uso de IA em análises preliminares sem rastreabilidade.',
+      B: 'Uso de IA em análises preliminares.',
       C: 'Uso de IA com validação humana e critérios definidos de supervisão.',
       D: 'Decisões totalmente automatizadas pela IA.',
     },
   },
 
-  // ── 7. Agentes de IA (Q25-Q27) ────────────────────────────
+  // ── Agentes de IA (Q24-Q27) ──────────────────────────────
   {
-    id: 25,
+    id: 24,
     dimension: 'agentes_ia',
     text: 'O que melhor caracteriza agentes de IA?',
     options: {
@@ -294,7 +285,7 @@ export const QUESTIONS = [
     },
   },
   {
-    id: 26,
+    id: 25,
     dimension: 'agentes_ia',
     text: 'Qual cenário representa melhor uso de agentes de IA?',
     options: {
@@ -305,7 +296,7 @@ export const QUESTIONS = [
     },
   },
   {
-    id: 27,
+    id: 26,
     dimension: 'agentes_ia',
     text: 'Qual prática representa maior maturidade no uso de agentes?',
     options: {
@@ -315,8 +306,19 @@ export const QUESTIONS = [
       D: 'Autonomia total para maximizar eficiência.',
     },
   },
+  {
+    id: 27,
+    dimension: 'agentes_ia',
+    text: 'Qual alternativa descreve melhor a diferença entre assistentes e agentes de IA?',
+    options: {
+      A: 'Assistentes respondem perguntas; agentes executam ações orientadas a objetivos com autonomia e uso de ferramentas.',
+      B: 'Assistentes usam apenas IA generativa; agentes não utilizam modelos de linguagem.',
+      C: 'Assistentes são sempre supervisionados; agentes nunca precisam de supervisão humana.',
+      D: 'Assistentes operam apenas em linguagem natural; agentes operam apenas em sistemas corporativos.',
+    },
+  },
 
-  // ── 8. Situações Executivas (Q28-Q31) ─────────────────────
+  // ── Situações Executivas (Q28-Q30) ───────────────────────
   {
     id: 28,
     dimension: 'situacoes_executivas',
@@ -324,7 +326,7 @@ export const QUESTIONS = [
     options: {
       A: 'Revisar dados, modelo e mecanismos de validação antes de continuar.',
       B: 'Substituir imediatamente a ferramenta utilizada.',
-      C: 'Reduzir dependência da IA sem revisar processo.',
+      C: 'Reforçar supervisão humana e processos de conferência até que a causa seja identificada.',
       D: 'Manter operação enquanto ajustes graduais são feitos.',
     },
   },
@@ -342,17 +344,6 @@ export const QUESTIONS = [
   {
     id: 30,
     dimension: 'situacoes_executivas',
-    text: 'Qual abordagem tende a gerar escala sustentável de IA?',
-    options: {
-      A: 'Crescimento gradual sem governança formal.',
-      B: 'Projetos isolados em áreas diferentes.',
-      C: 'Expansão estruturada com estratégia e governança.',
-      D: 'Expansão rápida sem padronização.',
-    },
-  },
-  {
-    id: 31,
-    dimension: 'situacoes_executivas',
     text: 'Como IA deve ser utilizada em decisões financeiras relevantes?',
     options: {
       A: 'Apenas em análises exploratórias preliminares.',
@@ -362,9 +353,9 @@ export const QUESTIONS = [
     },
   },
 
-  // ── 9. Aplicação Técnica Básica (Q32-Q35) ─────────────────
+  // ── Aplicação Técnica Básica (Q31-Q34) ───────────────────
   {
-    id: 32,
+    id: 31,
     dimension: 'aplicacao_tecnica',
     text: 'Uma resposta de IA ficou genérica e pouco útil. Qual ação tende a melhorar o resultado?',
     options: {
@@ -375,7 +366,7 @@ export const QUESTIONS = [
     },
   },
   {
-    id: 33,
+    id: 32,
     dimension: 'aplicacao_tecnica',
     text: 'Qual limitação é comum em modelos de linguagem?',
     options: {
@@ -386,7 +377,7 @@ export const QUESTIONS = [
     },
   },
   {
-    id: 34,
+    id: 33,
     dimension: 'aplicacao_tecnica',
     text: 'Qual abordagem tende a ser mais eficiente ao trabalhar com IA?',
     options: {
@@ -397,7 +388,7 @@ export const QUESTIONS = [
     },
   },
   {
-    id: 35,
+    id: 34,
     dimension: 'aplicacao_tecnica',
     text: 'Qual prática representa uso mais seguro de IA com dados corporativos?',
     options: {
@@ -405,96 +396,6 @@ export const QUESTIONS = [
       B: 'Compartilhar dados completos para obter respostas mais precisas.',
       C: 'Aplicar anonimização e seguir diretrizes internas de uso de dados.',
       D: 'Remover totalmente contexto corporativo das análises.',
-    },
-  },
-
-  // ── 10. Maturidade, Frequência e Percepção (Q36-Q43) ──────
-  {
-    id: 36,
-    dimension: 'maturidade_percepcao',
-    text: 'Com que frequência você utiliza ferramentas de IA no trabalho?',
-    options: {
-      A: 'Nunca utilizo.',
-      B: 'Utilizo raramente, em testes ou curiosidade.',
-      C: 'Utilizo semanalmente em tarefas específicas.',
-      D: 'Utilizo diariamente em atividades relevantes da minha rotina.',
-    },
-  },
-  {
-    id: 37,
-    dimension: 'maturidade_percepcao',
-    text: 'Como você avalia sua capacidade de estruturar boas solicitações para IA?',
-    options: {
-      A: 'Ainda não sei estruturar solicitações com clareza.',
-      B: 'Consigo fazer perguntas simples.',
-      C: 'Consigo informar objetivo, contexto, formato e restrições.',
-      D: 'Consigo estruturar solicitações avançadas, revisar respostas e iterar até obter resultado útil.',
-    },
-  },
-  {
-    id: 38,
-    dimension: 'maturidade_percepcao',
-    text: 'Como você identifica oportunidades de IA na empresa?',
-    options: {
-      A: 'Ainda não consigo identificar oportunidades claras.',
-      B: 'Identifico usos simples e individuais.',
-      C: 'Identifico oportunidades em processos da minha área.',
-      D: 'Priorizo oportunidades considerando impacto, dados, viabilidade, risco e retorno.',
-    },
-  },
-  {
-    id: 39,
-    dimension: 'maturidade_percepcao',
-    text: 'Qual é o estágio atual da empresa em relação à IA?',
-    options: {
-      A: 'Não há discussão estruturada.',
-      B: 'Existem testes isolados ou iniciativas informais.',
-      C: 'Existem iniciativas em algumas áreas.',
-      D: 'Existe estratégia, governança, responsáveis, indicadores e projetos priorizados.',
-    },
-  },
-  {
-    id: 40,
-    dimension: 'maturidade_percepcao',
-    text: 'Como você avalia a cultura da empresa para adoção de IA?',
-    options: {
-      A: 'Há resistência ou desconhecimento generalizado.',
-      B: 'Há curiosidade, mas pouca clareza sobre aplicação.',
-      C: 'Há abertura para testes, capacitação e experimentação.',
-      D: 'Há apoio executivo, comunicação clara e incentivo à adoção responsável.',
-    },
-  },
-  {
-    id: 41,
-    dimension: 'maturidade_percepcao',
-    text: 'Qual é sua familiaridade com conceitos como RAG, agentes, automação, governança e segurança em IA?',
-    options: {
-      A: 'Não conheço esses conceitos.',
-      B: 'Já ouvi falar, mas não sei explicar.',
-      C: 'Consigo explicar de forma geral.',
-      D: 'Consigo relacionar esses conceitos a aplicações práticas na empresa.',
-    },
-  },
-  {
-    id: 42,
-    dimension: 'maturidade_percepcao',
-    text: 'Como você decide se uma iniciativa de IA vale a pena?',
-    options: {
-      A: 'Pela novidade da ferramenta.',
-      B: 'Pela tendência de mercado ou recomendação de terceiros.',
-      C: 'Pelo potencial de ganho de produtividade, redução de custo ou melhoria operacional.',
-      D: 'Pela combinação entre problema, impacto, dados, viabilidade, risco, governança e retorno esperado.',
-    },
-  },
-  {
-    id: 43,
-    dimension: 'maturidade_percepcao',
-    text: 'Como você avalia sua capacidade de liderar ou patrocinar uma iniciativa de IA?',
-    options: {
-      A: 'Ainda não me sinto preparado.',
-      B: 'Consigo apoiar discussões iniciais.',
-      C: 'Consigo participar da definição de casos de uso e critérios de sucesso.',
-      D: 'Consigo orientar prioridades, riscos, governança, indicadores e adoção organizacional.',
     },
   },
 ]
