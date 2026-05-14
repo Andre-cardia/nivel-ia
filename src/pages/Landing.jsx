@@ -54,7 +54,7 @@ export default function Landing({ onStart, survey }) {
 
         {/* Meta info */}
         <div className="hero-meta animate-rise" style={{ animationDelay: '320ms' }}>
-          <span className="hero-meta-item">25 questões objetivas</span>
+          <span className="hero-meta-item">34 questões objetivas</span>
           <span className="hero-meta-item">10 a 15 minutos</span>
         </div>
       </div>
