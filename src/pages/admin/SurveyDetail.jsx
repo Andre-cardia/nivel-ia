@@ -103,9 +103,14 @@ export default function SurveyDetail({ onSignOut }) {
 
           {/* Header */}
           <div>
-            <button className="btn btn-outline" style={{ marginBottom: 'var(--s4)', fontSize: '0.8rem' }} onClick={() => navigate('/admin/surveys')}>
-              ← Pesquisas
-            </button>
+            <div style={{ display: 'flex', gap: 'var(--s3)', marginBottom: 'var(--s4)' }}>
+              <button className="btn btn-outline" style={{ fontSize: '0.8rem' }} onClick={() => navigate('/admin/surveys')}>
+                ← Pesquisas
+              </button>
+              <button className="btn btn-outline" style={{ fontSize: '0.8rem' }} onClick={() => navigate(`/admin/surveys/${id}/analytics`)}>
+                Analytics →
+              </button>
+            </div>
             <span className="eyebrow">{survey.is_active ? '● Ativa' : '○ Inativa'}</span>
             <h1 style={{ fontSize: '1.5rem', marginTop: 'var(--s2)' }}>{survey.company_name}</h1>
             <p style={{ marginTop: 'var(--s1)' }}>

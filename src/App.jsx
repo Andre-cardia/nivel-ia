@@ -12,6 +12,7 @@ import AdminLogin from './pages/admin/Login'
 import AdminDashboard from './pages/admin/Dashboard'
 import SurveyNew from './pages/admin/SurveyNew'
 import SurveyDetail from './pages/admin/SurveyDetail'
+import SurveyAnalytics from './pages/admin/SurveyAnalytics'
 
 /* ── Quiz flow (public) ──────────────────────────────────── */
 function QuizApp() {
@@ -109,6 +110,7 @@ function AdminRoute() {
       <Route path="/" element={<AdminDashboard onSignOut={handleSignOut} />} />
       <Route path="/surveys/new" element={<SurveyNew onSignOut={handleSignOut} />} />
       <Route path="/surveys/:id" element={<SurveyDetail onSignOut={handleSignOut} />} />
+      <Route path="/surveys/:id/analytics" element={<SurveyAnalytics onSignOut={handleSignOut} />} />
       <Route path="*" element={<Navigate to="/admin" replace />} />
     </Routes>
   )
