@@ -159,6 +159,7 @@ export default function SurveyDetail({ onSignOut }) {
                   <thead>
                     <tr>
                       <th>Data</th>
+                      <th>Nome</th>
                       <th>Cargo</th>
                       <th>Departamento</th>
                       <th>Pontuação</th>
@@ -171,6 +172,7 @@ export default function SurveyDetail({ onSignOut }) {
                       <Fragment key={a.id}>
                         <tr style={{ opacity: deletingId === a.id ? 0.4 : 1, transition: 'opacity 0.2s' }}>
                           <td className="mono-data">{new Date(a.created_at).toLocaleDateString('pt-BR')}</td>
+                          <td style={{ color: 'var(--text)', fontSize: '0.8rem' }}>{a.respondent_name || '—'}</td>
                           <td style={{ color: 'var(--muted)', fontSize: '0.8rem' }}>{a.respondent_role || '—'}</td>
                           <td style={{ color: 'var(--muted)', fontSize: '0.8rem' }}>{a.respondent_department || '—'}</td>
                           <td className="mono-data">
@@ -204,7 +206,7 @@ export default function SurveyDetail({ onSignOut }) {
                         </tr>
                         {selected === a.id && dimScores[a.id] && (
                           <tr>
-                            <td colSpan={6} style={{ background: 'var(--panel-2)', padding: 'var(--s5) var(--s6)' }}>
+                            <td colSpan={7} style={{ background: 'var(--panel-2)', padding: 'var(--s5) var(--s6)' }}>
                               <p className="eyebrow" style={{ marginBottom: 'var(--s4)' }}>Pontuação por Dimensão</p>
                               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 'var(--s4)' }}>
                                 {Object.entries(dimScores[a.id]).map(([dim, score]) => {

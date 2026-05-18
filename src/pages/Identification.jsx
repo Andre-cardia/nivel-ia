@@ -3,7 +3,8 @@ import { useState } from 'react'
 export default function Identification({ onSubmit, survey }) {
   const [form, setForm] = useState({
     companyName: survey?.company_name || '',
-    stakeholderName: '',
+    firstName: '',
+    lastName: '',
     stakeholderRole: '',
     stakeholderDepartment: '',
   })
@@ -28,9 +29,10 @@ export default function Identification({ onSubmit, survey }) {
       setErrors(validationErrors)
       return
     }
+    const fullName = [form.firstName.trim(), form.lastName.trim()].filter(Boolean).join(' ')
     onSubmit({
       companyName: form.companyName.trim(),
-      stakeholderName: '',
+      stakeholderName: fullName,
       stakeholderRole: form.stakeholderRole.trim(),
       stakeholderDepartment: form.stakeholderDepartment.trim(),
     })
@@ -48,8 +50,8 @@ export default function Identification({ onSubmit, survey }) {
           </h1>
           <p style={{ maxWidth: 400, margin: '0 auto' }}>
             {survey
-              ? 'Preencha seu cargo e departamento antes de iniciar.'
-              : 'Informe o nome da empresa e seu cargo para associar o resultado.'
+              ? 'Preencha seus dados antes de iniciar.'
+              : 'Informe o nome da empresa e seus dados para associar o resultado.'
             }
           </p>
         </div>
@@ -81,6 +83,41 @@ export default function Identification({ onSubmit, survey }) {
             </div>
           )}
 
+          {/* Nome e Sobrenome */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--s4)' }}>
+            <div className="input-group">
+              <label className="input-label" htmlFor="firstName">
+                Nome <span style={{ color: 'var(--muted)', fontWeight: 400, textTransform: 'none', letterSpacing: 0 }}>(opcional)</span>
+              </label>
+              <input
+                id="firstName"
+                name="firstName"
+                type="text"
+                className="input-field"
+                placeholder="Ex: João"
+                value={form.firstName}
+                onChange={handleChange}
+                autoComplete="given-name"
+                autoFocus={!!survey}
+              />
+            </div>
+            <div className="input-group">
+              <label className="input-label" htmlFor="lastName">
+                Sobrenome <span style={{ color: 'var(--muted)', fontWeight: 400, textTransform: 'none', letterSpacing: 0 }}>(opcional)</span>
+              </label>
+              <input
+                id="lastName"
+                name="lastName"
+                type="text"
+                className="input-field"
+                placeholder="Ex: Silva"
+                value={form.lastName}
+                onChange={handleChange}
+                autoComplete="family-name"
+              />
+            </div>
+          </div>
+
           {/* Cargo */}
           <div className="input-group">
             <label className="input-label" htmlFor="stakeholderRole">
@@ -95,7 +132,6 @@ export default function Identification({ onSubmit, survey }) {
               value={form.stakeholderRole}
               onChange={handleChange}
               autoComplete="organization-title"
-              autoFocus={!!survey}
             />
           </div>
 
