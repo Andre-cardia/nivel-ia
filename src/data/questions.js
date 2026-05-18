@@ -83,7 +83,7 @@ export const QUESTIONS = [
     dimension: 'uso_pratico',
     text: 'Qual abordagem tende a gerar melhores resultados ao interagir com IA?',
     options: {
-      A: 'Fazer múltiplas perguntas até obter uma resposta útil repetidamente, melhorando a pergunta até chegar à resposta desejada.',
+      A: 'Fazer perguntas e obter respostas repetidamente, melhorando a pergunta até chegar à resposta desejada.',
       B: 'Estruturar a pergunta com objetivo, contexto, restrições e formato esperado.',
       C: 'Fazer perguntas rápidas e simples para ganhar velocidade.',
       D: 'Fornecer algum contexto parcial conforme necessidade.',
@@ -95,7 +95,7 @@ export const QUESTIONS = [
     text: 'Uma equipe recebe respostas inconsistentes da IA. Qual ação tende a melhorar a qualidade dos resultados?',
     options: {
       A: 'Aprimorar o contexto fornecido, explicitar critérios de sucesso e adicionar restrições operacionais claras na solicitação.',
-      B: 'Padronizar rigidamente todos os prompts em um único template, independentemente do tipo de tarefa ou objetivo.',
+      B: 'Padronizar os prompts em um único template, independentemente do tipo de tarefa ou objetivo.',
       C: 'Repetir a mesma solicitação múltiplas vezes, assumindo que a variabilidade estatística do modelo converge para a resposta ideal.',
       D: 'Simplificar sistematicamente as perguntas, reduzindo escopo, variáveis e níveis de abstração envolvidos na instrução.',
     },
@@ -278,7 +278,7 @@ export const QUESTIONS = [
   {
     id: 24,
     dimension: 'situacoes_executivas',
-    text: 'Como IA deve ser utilizada em decisões financeiras relevantes?',
+    text: 'Como IA deve ser utilizada em decisões relevantes?',
     options: {
       A: 'Apenas em análises exploratórias preliminares.',
       B: 'Como substituição parcial da análise humana.',
