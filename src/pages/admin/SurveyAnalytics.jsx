@@ -1,17 +1,24 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import {
-  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
+  BarChart, Bar, Cell, XAxis, YAxis, Tooltip, ResponsiveContainer,
   RadarChart, Radar, PolarGrid, PolarAngleAxis,
   LineChart, Line, CartesianGrid, Legend,
 } from 'recharts'
 import { supabase } from '../../lib/supabase'
 import { LEVELS, DIMENSION_LABELS, DIMENSION_MAX } from '../../lib/scoring'
 
+// Valores concretos — CSS vars não resolvem em atributos SVG do Recharts
+const CHART_ACCENT  = '#ff6a00'
+const CHART_GREEN   = '#84cc16'
+const CHART_MUTED   = '#8b867c'
+const CHART_LINE    = 'rgba(255,255,255,0.08)'
+const CHART_TEXT    = '#f5f2ea'
+
 const LEVEL_COLORS = {
-  inicial:       'var(--muted)',
-  basico:        'var(--accent)',
-  intermediario: 'var(--green)',
+  inicial:       '#8b867c',
+  basico:        '#ff6a00',
+  intermediario: '#84cc16',
   avancado:      '#a78bfa',
   estrategico:   '#f59e0b',
 }
@@ -387,12 +394,12 @@ export default function SurveyAnalytics({ onSignOut }) {
                   <p className="eyebrow" style={{ marginBottom: 'var(--s5)' }}>Distribuição de Níveis</p>
                   <ResponsiveContainer width="100%" height={220}>
                     <BarChart data={levelData} layout="vertical" margin={{ left: 8, right: 24, top: 0, bottom: 0 }}>
-                      <XAxis type="number" allowDecimals={false} tick={{ fill: 'var(--muted)', fontSize: 11, fontFamily: 'var(--font-mono)' }} />
-                      <YAxis type="category" dataKey="name" width={110} tick={{ fill: 'var(--text)', fontSize: 11 }} />
-                      <Tooltip content={<CustomTooltip />} cursor={{ fill: 'var(--accent-soft)' }} />
+                      <XAxis type="number" allowDecimals={false} tick={{ fill: CHART_MUTED, fontSize: 11 }} />
+                      <YAxis type="category" dataKey="name" width={110} tick={{ fill: CHART_TEXT, fontSize: 11 }} />
+                      <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,106,0,0.1)' }} />
                       <Bar dataKey="count" name="Respondentes" radius={[0, 4, 4, 0]}>
                         {levelData.map((entry) => (
-                          <rect key={entry.key} fill={entry.fill} />
+                          <Cell key={entry.key} fill={entry.fill} />
                         ))}
                       </Bar>
                     </BarChart>
@@ -404,9 +411,9 @@ export default function SurveyAnalytics({ onSignOut }) {
                   <p className="eyebrow" style={{ marginBottom: 'var(--s5)' }}>Média por Dimensão (%)</p>
                   <ResponsiveContainer width="100%" height={220}>
                     <RadarChart data={radarData} margin={{ top: 0, right: 16, bottom: 0, left: 16 }}>
-                      <PolarGrid stroke="var(--line)" />
-                      <PolarAngleAxis dataKey="dim" tick={{ fill: 'var(--muted)', fontSize: 10 }} />
-                      <Radar name="%" dataKey="value" stroke="var(--accent)" fill="var(--accent)" fillOpacity={0.2} />
+                      <PolarGrid stroke={CHART_LINE} />
+                      <PolarAngleAxis dataKey="dim" tick={{ fill: CHART_MUTED, fontSize: 10 }} />
+                      <Radar name="%" dataKey="value" stroke={CHART_ACCENT} fill={CHART_ACCENT} fillOpacity={0.2} />
                       <Tooltip content={<CustomTooltip />} />
                     </RadarChart>
                   </ResponsiveContainer>
@@ -424,13 +431,13 @@ export default function SurveyAnalytics({ onSignOut }) {
                   ) : (
                     <ResponsiveContainer width="100%" height={220}>
                       <LineChart data={timelineData} margin={{ left: 0, right: 16, top: 4, bottom: 0 }}>
-                        <CartesianGrid stroke="var(--line)" strokeDasharray="3 3" />
-                        <XAxis dataKey="week" tick={{ fill: 'var(--muted)', fontSize: 10, fontFamily: 'var(--font-mono)' }} />
-                        <YAxis domain={[0, 29]} tick={{ fill: 'var(--muted)', fontSize: 10, fontFamily: 'var(--font-mono)' }} />
+                        <CartesianGrid stroke={CHART_LINE} strokeDasharray="3 3" />
+                        <XAxis dataKey="week" tick={{ fill: CHART_MUTED, fontSize: 10 }} />
+                        <YAxis domain={[0, 29]} tick={{ fill: CHART_MUTED, fontSize: 10 }} />
                         <Tooltip content={<CustomTooltip />} />
-                        <Legend wrapperStyle={{ fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: 'var(--muted)' }} />
-                        <Line type="monotone" dataKey="média" stroke="var(--accent)" strokeWidth={2} dot={{ r: 3, fill: 'var(--accent)' }} />
-                        <Line type="monotone" dataKey="respondentes" stroke="var(--green)" strokeWidth={1} strokeDasharray="4 2" dot={false} />
+                        <Legend wrapperStyle={{ fontSize: '0.75rem', color: CHART_MUTED }} />
+                        <Line type="monotone" dataKey="média" stroke={CHART_ACCENT} strokeWidth={2} dot={{ r: 3, fill: CHART_ACCENT }} />
+                        <Line type="monotone" dataKey="respondentes" stroke={CHART_GREEN} strokeWidth={1} strokeDasharray="4 2" dot={false} />
                       </LineChart>
                     </ResponsiveContainer>
                   )}
@@ -441,12 +448,12 @@ export default function SurveyAnalytics({ onSignOut }) {
                   <p className="eyebrow" style={{ marginBottom: 'var(--s5)' }}>Histograma de Pontuação</p>
                   <ResponsiveContainer width="100%" height={220}>
                     <BarChart data={histData} margin={{ left: 0, right: 16, top: 4, bottom: 40 }}>
-                      <XAxis dataKey="name" tick={{ fill: 'var(--muted)', fontSize: 9 }} angle={-30} textAnchor="end" interval={0} />
-                      <YAxis allowDecimals={false} tick={{ fill: 'var(--muted)', fontSize: 10, fontFamily: 'var(--font-mono)' }} />
-                      <Tooltip content={<CustomTooltip />} cursor={{ fill: 'var(--accent-soft)' }} />
+                      <XAxis dataKey="name" tick={{ fill: CHART_MUTED, fontSize: 9 }} angle={-30} textAnchor="end" interval={0} />
+                      <YAxis allowDecimals={false} tick={{ fill: CHART_MUTED, fontSize: 10 }} />
+                      <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,106,0,0.1)' }} />
                       <Bar dataKey="count" name="Respondentes" radius={[4, 4, 0, 0]}>
                         {histData.map((entry, i) => (
-                          <rect key={i} fill={entry.fill} />
+                          <Cell key={i} fill={entry.fill} />
                         ))}
                       </Bar>
                     </BarChart>
@@ -463,10 +470,10 @@ export default function SurveyAnalytics({ onSignOut }) {
                       <p className="eyebrow" style={{ marginBottom: 'var(--s5)' }}>Top Departamentos</p>
                       <ResponsiveContainer width="100%" height={220}>
                         <BarChart data={deptData} layout="vertical" margin={{ left: 8, right: 24, top: 0, bottom: 0 }}>
-                          <XAxis type="number" allowDecimals={false} tick={{ fill: 'var(--muted)', fontSize: 11, fontFamily: 'var(--font-mono)' }} />
-                          <YAxis type="category" dataKey="name" width={120} tick={{ fill: 'var(--text)', fontSize: 11 }} />
-                          <Tooltip content={<CustomTooltip />} cursor={{ fill: 'var(--accent-soft)' }} />
-                          <Bar dataKey="count" name="Respondentes" fill="var(--green)" radius={[0, 4, 4, 0]} />
+                          <XAxis type="number" allowDecimals={false} tick={{ fill: CHART_MUTED, fontSize: 11 }} />
+                          <YAxis type="category" dataKey="name" width={120} tick={{ fill: CHART_TEXT, fontSize: 11 }} />
+                          <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,106,0,0.1)' }} />
+                          <Bar dataKey="count" name="Respondentes" fill={CHART_GREEN} radius={[0, 4, 4, 0]} />
                         </BarChart>
                       </ResponsiveContainer>
                     </div>
@@ -477,9 +484,9 @@ export default function SurveyAnalytics({ onSignOut }) {
                       <p className="eyebrow" style={{ marginBottom: 'var(--s5)' }}>Top Cargos</p>
                       <ResponsiveContainer width="100%" height={220}>
                         <BarChart data={roleData} layout="vertical" margin={{ left: 8, right: 24, top: 0, bottom: 0 }}>
-                          <XAxis type="number" allowDecimals={false} tick={{ fill: 'var(--muted)', fontSize: 11, fontFamily: 'var(--font-mono)' }} />
-                          <YAxis type="category" dataKey="name" width={120} tick={{ fill: 'var(--text)', fontSize: 11 }} />
-                          <Tooltip content={<CustomTooltip />} cursor={{ fill: 'var(--accent-soft)' }} />
+                          <XAxis type="number" allowDecimals={false} tick={{ fill: CHART_MUTED, fontSize: 11 }} />
+                          <YAxis type="category" dataKey="name" width={120} tick={{ fill: CHART_TEXT, fontSize: 11 }} />
+                          <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,106,0,0.1)' }} />
                           <Bar dataKey="count" name="Respondentes" fill="#a78bfa" radius={[0, 4, 4, 0]} />
                         </BarChart>
                       </ResponsiveContainer>
