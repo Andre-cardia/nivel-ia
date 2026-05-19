@@ -109,8 +109,8 @@ function AdminRoute() {
     <Routes>
       <Route path="/" element={<AdminDashboard onSignOut={handleSignOut} />} />
       <Route path="/surveys/new" element={<SurveyNew onSignOut={handleSignOut} />} />
-      <Route path="/surveys/:id" element={<SurveyDetail onSignOut={handleSignOut} />} />
       <Route path="/surveys/:id/analytics" element={<SurveyAnalytics onSignOut={handleSignOut} />} />
+      <Route path="/surveys/:id" element={<SurveyDetail onSignOut={handleSignOut} />} />
       <Route path="*" element={<Navigate to="/admin" replace />} />
     </Routes>
   )

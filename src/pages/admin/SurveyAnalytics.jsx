@@ -89,6 +89,7 @@ export default function SurveyAnalytics({ onSignOut }) {
       setSurvey(sv)
       const list = as ?? []
       setAssessments(list)
+      console.log('[analytics] assessments carregados:', list.length, 'survey:', sv?.company_name)
 
       if (list.length > 0) {
         const ids = list.map(a => a.id)
@@ -244,8 +245,6 @@ export default function SurveyAnalytics({ onSignOut }) {
     </div>
   )
 
-  const hasData = filtered.length > 0
-
   return (
     <div className="admin-layout">
       <aside className="admin-sidebar">
@@ -378,13 +377,13 @@ export default function SurveyAnalytics({ onSignOut }) {
             ))}
           </div>
 
-          {!hasData && (
+          {assessments.length === 0 && (
             <div className="card" style={{ textAlign: 'center', padding: 'var(--s8)' }}>
-              <p style={{ color: 'var(--muted)', fontSize: '0.875rem' }}>Nenhum dado para os filtros selecionados.</p>
+              <p style={{ color: 'var(--muted)', fontSize: '0.875rem' }}>Nenhuma resposta coletada ainda.</p>
             </div>
           )}
 
-          {hasData && (
+          {assessments.length > 0 && (
             <>
               {/* ── Linha 1: Níveis + Radar ─────────────────── */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 'var(--s4)' }}>
