@@ -14,6 +14,33 @@ function levelLabel(key) {
   return LEVELS.find(l => l.key === key)?.label ?? key
 }
 
+const LEVEL_ORDER_MAP = { inicial: 0, basico: 1, intermediario: 2, avancado: 3, estrategico: 4 }
+
+function sortedAssessments(list, col, dir) {
+  const mult = dir === 'asc' ? 1 : -1
+  return [...list].sort((a, b) => {
+    if (col === 'date')  return mult * a.created_at.localeCompare(b.created_at)
+    if (col === 'name')  return mult * (a.respondent_name || '').toLowerCase().localeCompare((b.respondent_name || '').toLowerCase())
+    if (col === 'role')  return mult * (a.respondent_role || '').toLowerCase().localeCompare((b.respondent_role || '').toLowerCase())
+    if (col === 'dept')  return mult * (a.respondent_department || '').toLowerCase().localeCompare((b.respondent_department || '').toLowerCase())
+    if (col === 'score') return mult * (a.total_score - b.total_score)
+    if (col === 'level') return mult * ((LEVEL_ORDER_MAP[a.level] ?? 0) - (LEVEL_ORDER_MAP[b.level] ?? 0))
+    return 0
+  })
+}
+
+function SortTh({ col, label, sortCol, sortDir, onSort }) {
+  const active = sortCol === col
+  return (
+    <th onClick={() => onSort(col)} style={{ cursor: 'pointer', userSelect: 'none', whiteSpace: 'nowrap' }}>
+      {label}
+      <span style={{ marginLeft: 4, opacity: active ? 1 : 0.3, fontFamily: 'var(--font-mono)', fontSize: '0.65rem' }}>
+        {active ? (sortDir === 'asc' ? '↑' : '↓') : '↕'}
+      </span>
+    </th>
+  )
+}
+
 export default function SurveyDetail({ onSignOut }) {
   const { id } = useParams()
   const navigate = useNavigate()
@@ -23,6 +50,13 @@ export default function SurveyDetail({ onSignOut }) {
   const [selected, setSelected] = useState(null)
   const [dimScores, setDimScores] = useState({})
   const [deletingId, setDeletingId] = useState(null)
+  const [sortCol, setSortCol] = useState('date')
+  const [sortDir, setSortDir] = useState('desc')
+
+  function handleSort(col) {
+    if (sortCol === col) setSortDir(d => d === 'asc' ? 'desc' : 'asc')
+    else { setSortCol(col); setSortDir('asc') }
+  }
 
   useEffect(() => {
     async function load() {
@@ -163,17 +197,17 @@ export default function SurveyDetail({ onSignOut }) {
                 <table className="admin-table">
                   <thead>
                     <tr>
-                      <th>Data</th>
-                      <th>Nome</th>
-                      <th>Cargo</th>
-                      <th>Departamento</th>
-                      <th>Pontuação</th>
-                      <th>Nível</th>
+                      <SortTh col="date"  label="Data"         sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
+                      <SortTh col="name"  label="Nome"         sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
+                      <SortTh col="role"  label="Cargo"        sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
+                      <SortTh col="dept"  label="Departamento" sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
+                      <SortTh col="score" label="Pontuação"    sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
+                      <SortTh col="level" label="Nível"        sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
                       <th>Ações</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {assessments.map(a => (
+                    {sortedAssessments(assessments, sortCol, sortDir).map(a => (
                       <Fragment key={a.id}>
                         <tr style={{ opacity: deletingId === a.id ? 0.4 : 1, transition: 'opacity 0.2s' }}>
                           <td className="mono-data">{new Date(a.created_at).toLocaleDateString('pt-BR')}</td>
