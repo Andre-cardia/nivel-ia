@@ -6,6 +6,7 @@ import { useQuiz } from './hooks/useQuiz'
 import Landing from './pages/Landing'
 import Identification from './pages/Identification'
 import Quiz from './pages/Quiz'
+import ToolsQuestion from './pages/ToolsQuestion'
 import OpenQuestion from './pages/OpenQuestion'
 import Result from './pages/Result'
 import AdminLogin from './pages/admin/Login'
@@ -64,6 +65,13 @@ function QuizApp() {
           onPrev={quiz.goPrev}
         />
       )}
+      {quiz.step === 'tools'  && (
+        <ToolsQuestion
+          selectedTools={quiz.toolsUsed}
+          onToggle={quiz.toggleTool}
+          onSubmit={quiz.submitTools}
+        />
+      )}
       {quiz.step === 'open'   && <OpenQuestion onSubmit={quiz.submitOpen} />}
       {quiz.step === 'result' && (
         <Result
@@ -72,6 +80,7 @@ function QuizApp() {
           dimensionScores={quiz.dimensionScores}
           identification={quiz.identification}
           openAnswer={quiz.openAnswer}
+          toolsUsed={quiz.toolsUsed}
           survey={survey}
         />
       )}

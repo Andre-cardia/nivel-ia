@@ -9,7 +9,7 @@ import {
 
 /**
  * useQuiz — State machine para o fluxo completo do diagnóstico.
- * Steps: 'landing' → 'identification' → 'quiz' → 'open' → 'result'
+ * Steps: 'landing' → 'identification' → 'quiz' → 'tools' → 'open' → 'result'
  */
 export function useQuiz() {
   const [step, setStep] = useState('landing')
@@ -22,6 +22,7 @@ export function useQuiz() {
     stakeholderDepartment: '',
   })
   const [openAnswer, setOpenAnswer] = useState('')
+  const [toolsUsed, setToolsUsed] = useState([])
 
   // Derived state
   const totalScore = calculateTotalScore(answers)
@@ -48,7 +49,7 @@ export function useQuiz() {
     if (currentQuestion < QUESTIONS.length - 1) {
       setCurrentQuestion(q => q + 1)
     } else {
-      setStep('open')
+      setStep('tools')
     }
   }, [currentQuestion])
 
@@ -63,12 +64,23 @@ export function useQuiz() {
     setStep('result')
   }, [])
 
+  const toggleTool = useCallback((tool) => {
+    setToolsUsed(prev => (
+      prev.includes(tool)
+        ? prev.filter(selectedTool => selectedTool !== tool)
+        : [...prev, tool]
+    ))
+  }, [])
+
+  const submitTools = useCallback(() => setStep('open'), [])
+
   const restart = useCallback(() => {
     setStep('landing')
     setCurrentQuestion(0)
     setAnswers({})
     setIdentification({ companyName: '', stakeholderName: '', stakeholderRole: '', stakeholderDepartment: '' })
     setOpenAnswer('')
+    setToolsUsed([])
   }, [])
 
   return {
@@ -78,6 +90,7 @@ export function useQuiz() {
     answers,
     identification,
     openAnswer,
+    toolsUsed,
     // Derived
     totalScore,
     dimensionScores,
@@ -93,6 +106,8 @@ export function useQuiz() {
     goNext,
     goPrev,
     submitOpen,
+    toggleTool,
+    submitTools,
     restart,
   }
 }

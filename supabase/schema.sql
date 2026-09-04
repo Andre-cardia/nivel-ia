@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS assessments (
   total_score      INTEGER NOT NULL DEFAULT 0,
   level            TEXT NOT NULL DEFAULT 'inicial',
   open_answer      TEXT,
+  tools_used       TEXT[] NOT NULL DEFAULT '{}',
   completed_at     TIMESTAMPTZ DEFAULT now(),
   created_at       TIMESTAMPTZ DEFAULT now()
 );

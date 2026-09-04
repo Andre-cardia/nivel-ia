@@ -263,6 +263,12 @@ export default function SurveyDetail({ onSignOut }) {
                                   )
                                 })}
                               </div>
+                              <div style={{ marginTop: 'var(--s5)', paddingTop: 'var(--s4)', borderTop: '1px solid var(--line)' }}>
+                                <p className="eyebrow" style={{ marginBottom: 'var(--s2)' }}>Ferramentas de IA utilizadas</p>
+                                <p style={{ fontSize: '0.85rem', color: 'var(--text)' }}>
+                                  {a.tools_used?.length ? a.tools_used.join(', ') : 'Nenhuma informada'}
+                                </p>
+                              </div>
                             </td>
                           </tr>
                         )}

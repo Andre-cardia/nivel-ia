@@ -14,7 +14,7 @@ const LEVEL_COLORS = {
  * Result Page — Resultado, nível, recomendações e CTA
  * Implementa: Story 1.4 + envio Supabase (Story 2.2)
  */
-export default function Result({ totalScore, level, dimensionScores, identification, openAnswer, survey }) {
+export default function Result({ totalScore, level, dimensionScores, identification, openAnswer, toolsUsed, survey }) {
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const [saveError, setSaveError] = useState(null)
@@ -41,6 +41,7 @@ export default function Result({ totalScore, level, dimensionScores, identificat
           total_score: totalScore,
           level: level.key,
           open_answer: openAnswer || null,
+          tools_used: toolsUsed,
         })
 
       if (assessmentError) throw assessmentError
@@ -162,19 +163,6 @@ export default function Result({ totalScore, level, dimensionScores, identificat
           )}
         </div>
 
-        {/* CTAs */}
-        <div className="result-cta animate-rise" style={{ animationDelay: '320ms', display: 'flex', flexDirection: 'column', gap: 'var(--s3)', alignItems: 'center' }}>
-          <a
-            id="btn-cta-training"
-            href="https://mentoria.neuralhub.ia.br"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn btn-primary"
-            style={{ width: '100%', maxWidth: 320 }}
-          >
-            Explorar Treinamentos
-          </a>
-        </div>
       </div>
     </div>
   )

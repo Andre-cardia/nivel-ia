@@ -624,15 +624,6 @@ textarea.input-field {
   font-weight: 700;
   color: var(--accent);
 }
-.result-cta {
-  text-align: center;
-  padding-top: var(--s4);
-}
-.result-cta .btn {
-  width: 100%;
-  max-width: 320px;
-}
-
 /* ── ADMIN ───────────────────────────────────────────────── */
 .admin-layout {
   display: flex;
