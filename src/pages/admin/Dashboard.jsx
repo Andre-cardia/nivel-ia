@@ -2,11 +2,14 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { averageKnowledgeScore, KNOWLEDGE_MAX } from '../../lib/assessmentVersions'
+import { deleteSurveyWithResponses } from '../../lib/deleteSurvey'
 
 export default function AdminDashboard({ onSignOut }) {
   const navigate = useNavigate()
   const [surveys, setSurveys] = useState([])
   const [loading, setLoading] = useState(true)
+  const [deletingId, setDeletingId] = useState(null)
+  const [deleteError, setDeleteError] = useState(null)
 
   useEffect(() => {
     supabase
@@ -24,6 +27,31 @@ export default function AdminDashboard({ onSignOut }) {
         setLoading(false)
       })
   }, [])
+
+  async function deleteSurvey(survey) {
+    const respondents = survey.respondent_count
+    const respondentText = respondents === 1
+      ? '1 respondente e todas as suas respostas'
+      : `${respondents} respondentes e todas as suas respostas`
+    const confirmed = window.confirm(
+      `Excluir permanentemente a pesquisa “${survey.company_name}”?\n\n` +
+      `O link, ${respondentText} serão apagados. Esta ação não pode ser desfeita.`,
+    )
+    if (!confirmed) return
+
+    setDeleteError(null)
+    setDeletingId(survey.id)
+
+    try {
+      await deleteSurveyWithResponses(supabase, survey.id)
+      setSurveys(previous => previous.filter(item => item.id !== survey.id))
+    } catch (error) {
+      console.error('Failed to delete survey', error)
+      setDeleteError('Não foi possível excluir a pesquisa. Tente novamente.')
+    } finally {
+      setDeletingId(null)
+    }
+  }
 
   const totalRespondents = surveys.reduce((sum, s) => sum + s.respondent_count, 0)
   const activeSurveys = surveys.filter(s => s.is_active).length
@@ -101,9 +129,15 @@ export default function AdminDashboard({ onSignOut }) {
           )}
 
           {!loading && surveys.length > 0 && (
+            <>
+              {deleteError && (
+                <p role="alert" style={{ color: 'var(--error)', fontSize: '0.875rem' }}>
+                  {deleteError}
+                </p>
+              )}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 'var(--s4)' }}>
               {surveys.map(s => (
-                <div key={s.id} className="card" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--s4)' }}>
+                <div key={s.id} className="card" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--s4)', opacity: deletingId === s.id ? 0.5 : 1 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                     <div>
                       <p style={{ fontWeight: 700, fontSize: '1rem' }}>{s.company_name}</p>
@@ -138,16 +172,28 @@ export default function AdminDashboard({ onSignOut }) {
                     )}
                   </div>
 
-                  <button
-                    className="btn btn-outline w-full"
-                    style={{ marginTop: 'auto', fontSize: '0.8rem' }}
-                    onClick={() => navigate(`/admin/surveys/${s.id}`)}
-                  >
-                    Ver detalhes
-                  </button>
+                  <div style={{ display: 'flex', gap: 'var(--s2)', marginTop: 'auto' }}>
+                    <button
+                      className="btn btn-outline w-full"
+                      style={{ fontSize: '0.8rem' }}
+                      onClick={() => navigate(`/admin/surveys/${s.id}`)}
+                      disabled={deletingId === s.id}
+                    >
+                      Ver detalhes
+                    </button>
+                    <button
+                      className="btn btn-outline"
+                      style={{ fontSize: '0.8rem', color: 'var(--error)' }}
+                      onClick={() => deleteSurvey(s)}
+                      disabled={deletingId === s.id}
+                    >
+                      {deletingId === s.id ? 'Excluindo...' : 'Excluir'}
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
+            </>
           )}
 
         </div>
