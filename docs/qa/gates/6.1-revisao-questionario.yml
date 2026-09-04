@@ -1,0 +1,85 @@
+schema: 1
+story: '6.1'
+story_title: 'Revisão do questionário e interpretação dos resultados'
+gate: CONCERNS
+status_reason: 'Todos os gates automatizados estão verdes, a persistência foi verificada e o registro smoke foi removido; permanece somente o smoke pós-deploy das novas telas administrativas.'
+reviewer: 'Quinn (Test Architect)'
+updated: '2026-09-04T20:30:56Z'
+quality_score: 90
+expires: '2026-09-18T20:30:56Z'
+
+top_issues:
+  - id: 'TEST-001'
+    severity: medium
+    finding: 'O insert, retry e a listagem autenticada foram validados no Supabase real, mas as novas telas de detalhe e analytics ainda não tiveram smoke visual autenticado.'
+    suggested_action: 'Após publicar as telas novas, executar smoke autenticado com registros knowledge-v2 e legados e conferir dimensões, filtros, média e distribuição.'
+    suggested_owner: devops
+
+waiver:
+  active: false
+
+evidence:
+  tests_reviewed: 12
+  tests_passed: 12
+  risks_identified: 1
+  automated_checks:
+    targeted_eslint: PASS
+    unit_tests: PASS
+    build: PASS
+    diff_check: PASS
+    full_lint: PASS
+    typecheck: PASS
+    npm_audit: PASS
+    coderabbit: UNAVAILABLE
+    supabase_migration_v9: PASS
+    supabase_insert: PASS
+    supabase_retry: PASS
+    authenticated_legacy_admin_list: PASS
+    new_admin_detail_analytics_smoke: PENDING
+  trace:
+    ac_covered: [1, 2, 3, 4, 5, 6]
+    ac_gaps: []
+  post_migration_record:
+    id: '192b6e07-29c7-44bd-a65b-bd01b4675492'
+    questionnaire_version: 'knowledge-v2'
+    scoring_model: 'binary-knowledge-26-v1'
+    score_max: 26
+    total_score: 7
+    usage_frequency: 'A'
+    tools_used: ['ChatGPT', 'Outras']
+    tools_other: 'SMOKE TOOL V2'
+    answer_details_count: 27
+    answer_score_sum: 7
+    q1_score: 0
+    first_question_id: 1
+    last_question_id: 27
+    cleanup_status: 'REMOVED_CONFIRMED_BY_UI_RELOAD'
+    cleanup_evidence:
+      carpark_respondents: 0
+      total_respondents: 32
+
+nfr_validation:
+  security:
+    status: PASS
+    notes: 'RLS de leitura autenticada foi preservada; inserção anônima já fazia parte do contrato público.'
+  performance:
+    status: CONCERNS
+    notes: 'Bundle principal de 880,90 kB supera o aviso de 500 kB, sem impedir o build.'
+  reliability:
+    status: CONCERNS
+    notes: 'Persistência, estrutura do payload, retry idempotente e remoção do registro smoke passaram; falta smoke autenticado das novas telas administrativas.'
+  maintainability:
+    status: PASS
+    notes: 'Arquitetura modular, lint global e typecheck normativo aprovados.'
+
+recommendations:
+  immediate:
+    - action: 'Após publicar as telas novas, validar detalhe e analytics autenticados com dados knowledge-v2 e legados.'
+      refs: ['src/pages/admin/SurveyDetail.jsx', 'src/pages/admin/SurveyAnalytics.jsx']
+  future:
+    - action: 'Adicionar constraints ou validação server-side para a coerência do payload knowledge-v2.'
+      refs: ['supabase/schema.sql', 'supabase/migration_v9.sql']
+    - action: 'Adicionar testes integrados de navegação e agregações com dados mistos.'
+      refs: ['src/pages/admin/SurveyAnalytics.jsx', 'src/pages/admin/SurveyDetail.jsx']
+    - action: 'Aplicar code splitting às telas administrativas e ao Recharts.'
+      refs: ['src/App.jsx', 'src/pages/admin/SurveyAnalytics.jsx']

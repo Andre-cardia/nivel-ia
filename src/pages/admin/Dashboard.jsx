@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
+import { averageKnowledgeScore, KNOWLEDGE_MAX } from '../../lib/assessmentVersions'
 
 export default function AdminDashboard({ onSignOut }) {
   const navigate = useNavigate()
@@ -10,16 +11,14 @@ export default function AdminDashboard({ onSignOut }) {
   useEffect(() => {
     supabase
       .from('surveys')
-      .select('id, company_name, stakeholder_name, stakeholder_role, token, is_active, created_at, assessments(total_score)')
+      .select('id, company_name, stakeholder_name, stakeholder_role, token, is_active, created_at, assessments(total_score, questionnaire_version, scoring_model, score_max)')
       .order('created_at', { ascending: false })
       .then(({ data, error }) => {
         if (!error && data) {
           setSurveys(data.map(s => ({
             ...s,
             respondent_count: s.assessments.length,
-            avg_score: s.assessments.length
-              ? Math.round(s.assessments.reduce((sum, a) => sum + a.total_score, 0) / s.assessments.length)
-              : null,
+            avg_score: averageKnowledgeScore(s.assessments),
           })))
         }
         setLoading(false)
@@ -131,9 +130,9 @@ export default function AdminDashboard({ onSignOut }) {
                     </div>
                     {s.avg_score !== null && (
                       <div>
-                        <p className="eyebrow" style={{ marginBottom: 'var(--s1)' }}>Média</p>
+                        <p className="eyebrow" style={{ marginBottom: 'var(--s1)' }}>Média · Conhecimento v2</p>
                         <p style={{ fontFamily: 'var(--font-mono)', fontSize: '1.25rem', fontWeight: 700, color: 'var(--accent)' }}>
-                          {s.avg_score}<span style={{ fontSize: '0.75rem', color: 'var(--muted)' }}>/75</span>
+                          {s.avg_score.toFixed(1)}<span style={{ fontSize: '0.75rem', color: 'var(--muted)' }}>/{KNOWLEDGE_MAX}</span>
                         </p>
                       </div>
                     )}

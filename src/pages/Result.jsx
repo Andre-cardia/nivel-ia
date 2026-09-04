@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { DIMENSION_LABELS, DIMENSION_MAX, MAX_SCORE } from '../lib/scoring'
+import { buildAssessmentPayload, isAssessmentRetryDuplicate } from '../lib/assessmentPayload'
+import { USAGE_OPTIONS } from '../data/questions'
 
 const LEVEL_COLORS = {
   inicial:       'var(--muted)',
@@ -11,13 +13,14 @@ const LEVEL_COLORS = {
 }
 
 /**
- * Result Page — Resultado, nível, recomendações e CTA
+ * Result Page — Conhecimento demonstrado e oportunidades de aprendizado
  * Implementa: Story 1.4 + envio Supabase (Story 2.2)
  */
-export default function Result({ totalScore, level, dimensionScores, identification, openAnswer, toolsUsed, survey }) {
+export default function Result({ totalScore, level, dimensionScores, identification, openAnswer, toolsUsed, toolsOther, answers, survey }) {
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const [saveError, setSaveError] = useState(null)
+  const [assessmentId] = useState(() => crypto.randomUUID())
   const accentColor = LEVEL_COLORS[level.key] || 'var(--accent)'
 
   async function handleSave() {
@@ -25,40 +28,22 @@ export default function Result({ totalScore, level, dimensionScores, identificat
     setSaving(true)
     setSaveError(null)
     try {
+      const payload = buildAssessmentPayload({
+        assessmentId,
+        survey,
+        identification,
+        answers,
+        openAnswer,
+        toolsUsed,
+        toolsOther,
+      })
       // UUID gerado no cliente para não depender de SELECT após INSERT
       // (RLS bloqueia SELECT para usuários anônimos)
-      const assessmentId = crypto.randomUUID()
-
       const { error: assessmentError } = await supabase
         .from('assessments')
-        .insert({
-          id: assessmentId,
-          survey_id: survey?.id || null,
-          company_name: survey ? survey.company_name : identification.companyName,
-          respondent_name: identification.stakeholderName || null,
-          respondent_role: identification.stakeholderRole || null,
-          respondent_department: identification.stakeholderDepartment || null,
-          total_score: totalScore,
-          level: level.key,
-          open_answer: openAnswer || null,
-          tools_used: toolsUsed,
-        })
+        .insert(payload)
 
-      if (assessmentError) throw assessmentError
-
-      const dimensionRows = Object.entries(dimensionScores).map(([dim, score]) => ({
-        assessment_id: assessmentId,
-        question_number: 0,
-        dimension: dim,
-        selected_option: '-',
-        score,
-      }))
-
-      const { error: dimError } = await supabase
-        .from('assessment_answers')
-        .insert(dimensionRows)
-
-      if (dimError) throw dimError
+      if (assessmentError && !isAssessmentRetryDuplicate(assessmentError, assessmentId)) throw assessmentError
 
       setSaved(true)
     } catch (err) {
@@ -85,7 +70,7 @@ export default function Result({ totalScore, level, dimensionScores, identificat
 
         {/* Score card */}
         <div className="card result-score-card animate-rise" style={{ animationDelay: '80ms' }}>
-          <p className="eyebrow" style={{ marginBottom: 'var(--s3)' }}>Pontuação Total</p>
+          <p className="eyebrow" style={{ marginBottom: 'var(--s3)' }}>Acertos de conhecimento</p>
           <div className="metric-display">
             {totalScore}
             <span className="metric-total">/ {MAX_SCORE}</span>
@@ -97,10 +82,13 @@ export default function Result({ totalScore, level, dimensionScores, identificat
           className="card card-accent result-level-card animate-rise"
           style={{ animationDelay: '160ms', borderTopColor: accentColor }}
         >
-          <span className="eyebrow">Nível Alcançado</span>
+          <span className="eyebrow">Leitura do resultado</span>
           <p className="result-level-name" style={{ color: accentColor }}>{level.label}</p>
           <p style={{ fontSize: '0.9rem', lineHeight: 1.7, color: 'var(--muted)' }}>
             {level.description}
+          </p>
+          <p style={{ fontSize: '0.8rem', lineHeight: 1.6, color: 'var(--text)' }}>
+            Frequência de uso: {USAGE_OPTIONS[answers[1]] ?? 'Não informada'}
           </p>
           <div style={{ marginTop: 'var(--s4)', paddingTop: 'var(--s4)', borderTop: '1px solid var(--line)' }}>
             <p className="eyebrow" style={{ marginBottom: 'var(--s2)' }}>Recomendação</p>

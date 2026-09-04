@@ -2,6 +2,15 @@ import { Fragment, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { LEVELS, DIMENSION_LABELS, DIMENSION_MAX } from '../../lib/scoring'
+import { USAGE_OPTIONS } from '../../data/questions'
+import {
+  answerDimensionScores,
+  assessmentVersion,
+  averageKnowledgeScore,
+  isKnowledgeAssessment,
+  scoreLabel,
+  versionLabel,
+} from '../../lib/assessmentVersions'
 
 const LEVEL_COLORS = {
   inicial: 'var(--muted)',
@@ -73,6 +82,12 @@ export default function SurveyDetail({ onSignOut }) {
 
   async function loadDim(aId) {
     if (dimScores[aId]) { setSelected(aId); return }
+    const assessment = assessments.find(item => item.id === aId)
+    if (isKnowledgeAssessment(assessment)) {
+      setDimScores(previous => ({ ...previous, [aId]: answerDimensionScores(assessment) }))
+      setSelected(aId)
+      return
+    }
     const { data } = await supabase
       .from('assessment_answers')
       .select('dimension, score')
@@ -93,11 +108,7 @@ export default function SurveyDetail({ onSignOut }) {
     setDeletingId(null)
   }
 
-  const maxScore = LEVELS[LEVELS.length - 1].max
-
-  const avgScore = assessments.length
-    ? Math.round(assessments.reduce((s, a) => s + a.total_score, 0) / assessments.length)
-    : null
+  const avgScore = averageKnowledgeScore(assessments)
 
   if (loading) return (
     <div style={{ minHeight: '100vh', background: 'var(--bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -174,9 +185,9 @@ export default function SurveyDetail({ onSignOut }) {
             </div>
             {avgScore !== null && (
               <div className="card" style={{ textAlign: 'center' }}>
-                <p className="eyebrow" style={{ marginBottom: 'var(--s2)' }}>Média da Empresa</p>
+                <p className="eyebrow" style={{ marginBottom: 'var(--s2)' }}>Média · Conhecimento v2</p>
                 <p style={{ fontFamily: 'var(--font-mono)', fontSize: '2rem', fontWeight: 700, color: 'var(--accent)' }}>
-                  {avgScore}<span style={{ fontSize: '1rem', color: 'var(--muted)' }}>/{maxScore}</span>
+                  {avgScore.toFixed(1)}<span style={{ fontSize: '1rem', color: 'var(--muted)' }}>/26</span>
                 </p>
               </div>
             )}
@@ -202,7 +213,7 @@ export default function SurveyDetail({ onSignOut }) {
                       <SortTh col="role"  label="Cargo"        sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
                       <SortTh col="dept"  label="Departamento" sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
                       <SortTh col="score" label="Pontuação"    sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-                      <SortTh col="level" label="Nível"        sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
+                      <SortTh col="level" label="Modelo"       sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
                       <th>Ações</th>
                     </tr>
                   </thead>
@@ -215,12 +226,11 @@ export default function SurveyDetail({ onSignOut }) {
                           <td style={{ color: 'var(--muted)', fontSize: '0.8rem' }}>{a.respondent_role || '—'}</td>
                           <td style={{ color: 'var(--muted)', fontSize: '0.8rem' }}>{a.respondent_department || '—'}</td>
                           <td className="mono-data">
-                            <span style={{ color: 'var(--accent)' }}>{a.total_score}</span>
-                            <span style={{ color: 'var(--muted)' }}>/{maxScore}</span>
+                            <span style={{ color: 'var(--accent)' }}>{scoreLabel(a)}</span>
                           </td>
                           <td>
-                            <span className="badge" style={{ background: 'transparent', color: LEVEL_COLORS[a.level], border: `1px solid ${LEVEL_COLORS[a.level]}40` }}>
-                              {levelLabel(a.level)}
+                            <span className="badge" style={{ background: 'transparent', color: isKnowledgeAssessment(a) ? 'var(--accent)' : (LEVEL_COLORS[a.level] ?? 'var(--muted)'), border: '1px solid var(--line-strong)' }}>
+                              {isKnowledgeAssessment(a) ? 'Conhecimento v2' : levelLabel(a.level)}
                             </span>
                           </td>
                           <td>
@@ -247,6 +257,9 @@ export default function SurveyDetail({ onSignOut }) {
                           <tr>
                             <td colSpan={7} style={{ background: 'var(--panel-2)', padding: 'var(--s5) var(--s6)' }}>
                               <p className="eyebrow" style={{ marginBottom: 'var(--s4)' }}>Pontuação por Dimensão</p>
+                              <p style={{ fontSize: '0.75rem', color: 'var(--muted)', marginBottom: 'var(--s4)' }}>
+                                {versionLabel(assessmentVersion(a))} · {scoreLabel(a)}
+                              </p>
                               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 'var(--s4)' }}>
                                 {Object.entries(dimScores[a.id]).map(([dim, score]) => {
                                   const max = DIMENSION_MAX[dim] ?? 3
@@ -264,9 +277,14 @@ export default function SurveyDetail({ onSignOut }) {
                                 })}
                               </div>
                               <div style={{ marginTop: 'var(--s5)', paddingTop: 'var(--s4)', borderTop: '1px solid var(--line)' }}>
+                                <p className="eyebrow" style={{ marginBottom: 'var(--s2)' }}>Frequência de uso nos últimos 30 dias</p>
+                                <p style={{ fontSize: '0.85rem', color: 'var(--text)', marginBottom: 'var(--s4)' }}>
+                                  {USAGE_OPTIONS[a.usage_frequency] ?? 'Não informada'}
+                                </p>
                                 <p className="eyebrow" style={{ marginBottom: 'var(--s2)' }}>Ferramentas de IA utilizadas</p>
                                 <p style={{ fontSize: '0.85rem', color: 'var(--text)' }}>
-                                  {a.tools_used?.length ? a.tools_used.join(', ') : 'Nenhuma informada'}
+                                  {a.tools_used?.length ? a.tools_used.join(', ') : 'Não informadas'}
+                                  {a.tools_other ? `: ${a.tools_other}` : ''}
                                 </p>
                               </div>
                             </td>

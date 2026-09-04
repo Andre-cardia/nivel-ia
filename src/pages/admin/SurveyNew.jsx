@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 
+/** @typedef {{ token: string, company_name: string, stakeholder_name: string, stakeholder_role?: string | null }} CreatedSurvey */
+
 /** Gera token legível: 8 chars alfanuméricos */
 function generateToken() {
   return Math.random().toString(36).slice(2, 6) +
@@ -15,10 +17,11 @@ export default function SurveyNew() {
     stakeholder_name: '',
     stakeholder_role: '',
   })
-  const [errors, setErrors] = useState({})
+  const [errors, setErrors] = useState(/** @type {Record<string, string>} */ ({}))
   const [loading, setLoading] = useState(false)
-  const [created, setCreated] = useState(null) // survey criada
+  const [created, setCreated] = useState(/** @type {CreatedSurvey | null} */ (null)) // survey criada
 
+  /** @param {import('react').ChangeEvent<HTMLInputElement>} e */
   function handleChange(e) {
     const { name, value } = e.target
     setForm(p => ({ ...p, [name]: value }))
@@ -26,12 +29,14 @@ export default function SurveyNew() {
   }
 
   function validate() {
+    /** @type {Record<string, string>} */
     const e = {}
     if (!form.company_name.trim())    e.company_name    = 'Nome da empresa é obrigatório.'
     if (!form.stakeholder_name.trim()) e.stakeholder_name = 'Nome do stakeholder é obrigatório.'
     return e
   }
 
+  /** @param {import('react').FormEvent<HTMLFormElement>} e */
   async function handleSubmit(e) {
     e.preventDefault()
     const errs = validate()
@@ -82,7 +87,7 @@ export default function SurveyNew() {
                 value={surveyLink}
                 className="input-field"
                 style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', flex: 1 }}
-                onClick={e => e.target.select()}
+                onClick={e => e.currentTarget.select()}
               />
               <button
                 className="btn btn-outline"

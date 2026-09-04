@@ -1,7 +1,7 @@
 import { DIMENSION_LABELS } from '../lib/scoring'
 
 /**
- * Quiz Page — Fluxo das 25 questões
+ * Quiz Page — Fluxo das 27 questões
  * Implementa: Story 1.2 - AC completo
  */
 export default function Quiz({

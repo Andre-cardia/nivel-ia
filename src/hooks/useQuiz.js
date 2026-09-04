@@ -2,10 +2,10 @@ import { useState, useCallback } from 'react'
 import { QUESTIONS } from '../data/questions'
 import {
   calculateTotalScore,
-  calculateObjectiveScore,
   calculateDimensionScores,
   determineLevel,
 } from '../lib/scoring'
+import { NO_AI_TOOL, OTHER_AI_TOOL, toggleToolSelection } from '../lib/toolsSelection'
 
 /**
  * useQuiz — State machine para o fluxo completo do diagnóstico.
@@ -23,12 +23,12 @@ export function useQuiz() {
   })
   const [openAnswer, setOpenAnswer] = useState('')
   const [toolsUsed, setToolsUsed] = useState([])
+  const [toolsOther, setToolsOther] = useState('')
 
   // Derived state
   const totalScore = calculateTotalScore(answers)
-  const objectiveScore = calculateObjectiveScore(answers)
   const dimensionScores = calculateDimensionScores(answers)
-  const level = determineLevel(totalScore, objectiveScore)
+  const level = determineLevel()
   const progress = (currentQuestion / QUESTIONS.length) * 100
 
   // ── Actions ─────────────────────────────────────────────
@@ -65,14 +65,15 @@ export function useQuiz() {
   }, [])
 
   const toggleTool = useCallback((tool) => {
-    setToolsUsed(prev => (
-      prev.includes(tool)
-        ? prev.filter(selectedTool => selectedTool !== tool)
-        : [...prev, tool]
-    ))
+    setToolsUsed(prev => {
+      if (tool === NO_AI_TOOL || (tool === OTHER_AI_TOOL && prev.includes(tool))) setToolsOther('')
+      return toggleToolSelection(prev, tool)
+    })
   }, [])
 
   const submitTools = useCallback(() => setStep('open'), [])
+  const returnToQuiz = useCallback(() => setStep('quiz'), [])
+  const returnToTools = useCallback(() => setStep('tools'), [])
 
   const restart = useCallback(() => {
     setStep('landing')
@@ -81,6 +82,7 @@ export function useQuiz() {
     setIdentification({ companyName: '', stakeholderName: '', stakeholderRole: '', stakeholderDepartment: '' })
     setOpenAnswer('')
     setToolsUsed([])
+    setToolsOther('')
   }, [])
 
   return {
@@ -91,6 +93,7 @@ export function useQuiz() {
     identification,
     openAnswer,
     toolsUsed,
+    toolsOther,
     // Derived
     totalScore,
     dimensionScores,
@@ -107,7 +110,10 @@ export function useQuiz() {
     goPrev,
     submitOpen,
     toggleTool,
+    setToolsOther,
     submitTools,
+    returnToQuiz,
+    returnToTools,
     restart,
   }
 }

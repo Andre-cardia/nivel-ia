@@ -1,5 +1,11 @@
 import { useState } from 'react'
 
+/**
+ * @param {{
+ *   onSubmit: (data: { companyName: string, stakeholderName: string, stakeholderRole: string, stakeholderDepartment: string }) => void,
+ *   survey?: { company_name: string } | null,
+ * }} props
+ */
 export default function Identification({ onSubmit, survey }) {
   const [form, setForm] = useState({
     companyName: survey?.company_name || '',
@@ -8,8 +14,9 @@ export default function Identification({ onSubmit, survey }) {
     stakeholderRole: '',
     stakeholderDepartment: '',
   })
-  const [errors, setErrors] = useState({})
+  const [errors, setErrors] = useState(/** @type {Record<string, string>} */ ({}))
 
+  /** @param {import('react').ChangeEvent<HTMLInputElement>} e */
   function handleChange(e) {
     const { name, value } = e.target
     setForm(prev => ({ ...prev, [name]: value }))
@@ -17,11 +24,13 @@ export default function Identification({ onSubmit, survey }) {
   }
 
   function validate() {
+    /** @type {Record<string, string>} */
     const newErrors = {}
     if (!survey && !form.companyName.trim()) newErrors.companyName = 'Nome da empresa é obrigatório.'
     return newErrors
   }
 
+  /** @param {import('react').FormEvent<HTMLFormElement>} e */
   function handleSubmit(e) {
     e.preventDefault()
     const validationErrors = validate()

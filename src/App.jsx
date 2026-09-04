@@ -68,11 +68,14 @@ function QuizApp() {
       {quiz.step === 'tools'  && (
         <ToolsQuestion
           selectedTools={quiz.toolsUsed}
+          otherTools={quiz.toolsOther}
           onToggle={quiz.toggleTool}
+          onOtherChange={quiz.setToolsOther}
           onSubmit={quiz.submitTools}
+          onBack={quiz.returnToQuiz}
         />
       )}
-      {quiz.step === 'open'   && <OpenQuestion onSubmit={quiz.submitOpen} />}
+      {quiz.step === 'open'   && <OpenQuestion onSubmit={quiz.submitOpen} onBack={quiz.returnToTools} />}
       {quiz.step === 'result' && (
         <Result
           totalScore={quiz.totalScore}
@@ -81,6 +84,8 @@ function QuizApp() {
           identification={quiz.identification}
           openAnswer={quiz.openAnswer}
           toolsUsed={quiz.toolsUsed}
+          toolsOther={quiz.toolsOther}
+          answers={quiz.answers}
           survey={survey}
         />
       )}
@@ -117,7 +122,7 @@ function AdminRoute() {
   return (
     <Routes>
       <Route path="/" element={<AdminDashboard onSignOut={handleSignOut} />} />
-      <Route path="/surveys/new" element={<SurveyNew onSignOut={handleSignOut} />} />
+      <Route path="/surveys/new" element={<SurveyNew />} />
       <Route path="/surveys/:id/analytics" element={<SurveyAnalytics onSignOut={handleSignOut} />} />
       <Route path="/surveys/:id" element={<SurveyDetail onSignOut={handleSignOut} />} />
       <Route path="*" element={<Navigate to="/admin" replace />} />

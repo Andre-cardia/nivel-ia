@@ -4,7 +4,7 @@ import { useState } from 'react'
  * OpenQuestion Page — Pergunta aberta opcional
  * Implementa: Story 1.3
  */
-export default function OpenQuestion({ onSubmit }) {
+export default function OpenQuestion({ onSubmit, onBack }) {
   const [text, setText] = useState('')
 
   return (
@@ -38,13 +38,10 @@ export default function OpenQuestion({ onSubmit }) {
           </span>
         </div>
 
-        <button
-          id="btn-submit-open"
-          className="btn btn-primary w-full"
-          onClick={() => onSubmit(text)}
-        >
-          Ver meu resultado →
-        </button>
+        <div className="question-footer">
+          <button className="btn btn-outline" onClick={onBack}>← Anterior</button>
+          <button id="btn-submit-open" className="btn btn-primary" onClick={() => onSubmit(text)}>Ver resultado →</button>
+        </div>
 
         <button
           id="btn-skip-open"

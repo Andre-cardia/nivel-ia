@@ -36,8 +36,8 @@ export default function Landing({ onStart, survey }) {
 
         {/* Sub-headline */}
         <p className="hero-subtitle animate-rise" style={{ animationDelay: '160ms', margin: '0 auto' }}>
-          Um diagnóstico estratégico para medir o grau de conhecimento,
-          maturidade e percepção executiva sobre Inteligência Artificial.
+          Um diagnóstico para identificar conhecimentos demonstrados,
+          perfil de uso e oportunidades de aprendizado em Inteligência Artificial.
         </p>
 
         {/* CTA */}

@@ -10,20 +10,21 @@ const AI_TOOLS = [
   'Notion.ai',
   'Microsoft Co-pilot',
   'Outras',
+  'Não utilizo nenhuma',
 ]
 
 /**
  * ToolsQuestion — Seleção múltipla opcional de ferramentas de IA usadas.
  * Não interfere na pontuação ou no nível do diagnóstico.
  */
-export default function ToolsQuestion({ selectedTools, onToggle, onSubmit }) {
+export default function ToolsQuestion({ selectedTools, otherTools, onToggle, onOtherChange, onSubmit, onBack }) {
   return (
     <div className="id-page">
       <div className="id-form-wrapper">
         <div className="id-header">
-          <span className="eyebrow">Pergunta Final — Opcional</span>
+          <span className="eyebrow">Perfil de uso — Opcional</span>
           <h2 style={{ fontSize: 'clamp(1.2rem, 3vw, 1.5rem)' }}>
-            Quais ferramentas de IA você utiliza?
+            Quais ferramentas de IA você utilizou no trabalho nos últimos 30 dias?
           </h2>
           <p>Selecione todas as opções que se aplicam ao seu dia a dia.</p>
         </div>
@@ -49,13 +50,24 @@ export default function ToolsQuestion({ selectedTools, onToggle, onSubmit }) {
           })}
         </div>
 
-        <button
-          id="btn-submit-tools"
-          className="btn btn-primary w-full"
-          onClick={onSubmit}
-        >
-          Continuar →
-        </button>
+        {selectedTools.includes('Outras') && (
+          <div className="input-group">
+            <label className="input-label" htmlFor="tools-other">Quais outras?</label>
+            <input
+              id="tools-other"
+              className="input-field"
+              value={otherTools}
+              onChange={event => onOtherChange(event.target.value)}
+              maxLength={200}
+              placeholder="Informe as outras ferramentas"
+            />
+          </div>
+        )}
+
+        <div className="question-footer">
+          <button className="btn btn-outline" onClick={onBack}>← Anterior</button>
+          <button id="btn-submit-tools" className="btn btn-primary" onClick={onSubmit}>Continuar →</button>
+        </div>
       </div>
     </div>
   )
