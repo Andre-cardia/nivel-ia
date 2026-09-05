@@ -158,6 +158,7 @@ export default function SurveyDetail({ onSignOut }) {
             </div>
             <span className="eyebrow">{survey.is_active ? '● Ativa' : '○ Inativa'}</span>
             <h1 style={{ fontSize: '1.5rem', marginTop: 'var(--s2)' }}>{survey.company_name}</h1>
+            <p className="eyebrow" style={{ marginTop: 'var(--s2)' }}>{survey.application_phase === 'final' ? 'Aplicação final · após o treinamento' : 'Diagnóstico inicial · ponto de partida'}</p>
             <p style={{ marginTop: 'var(--s1)' }}>
               Stakeholder: {survey.stakeholder_name}{survey.stakeholder_role ? ` · ${survey.stakeholder_role}` : ''}
             </p>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { lazy, Suspense, useEffect, useState } from 'react'
 import { BrowserRouter, Routes, Route, Navigate, useNavigate, useParams } from 'react-router-dom'
 import './styles/index.css'
 import { supabase } from './lib/supabase'
@@ -13,7 +13,7 @@ import AdminLogin from './pages/admin/Login'
 import AdminDashboard from './pages/admin/Dashboard'
 import SurveyNew from './pages/admin/SurveyNew'
 import SurveyDetail from './pages/admin/SurveyDetail'
-import SurveyAnalytics from './pages/admin/SurveyAnalytics'
+const SurveyAnalytics = lazy(() => import('./pages/admin/SurveyAnalytics'))
 
 /* ── Quiz flow (public) ──────────────────────────────────── */
 function QuizApp() {
@@ -123,7 +123,7 @@ function AdminRoute() {
     <Routes>
       <Route path="/" element={<AdminDashboard onSignOut={handleSignOut} />} />
       <Route path="/surveys/new" element={<SurveyNew />} />
-      <Route path="/surveys/:id/analytics" element={<SurveyAnalytics onSignOut={handleSignOut} />} />
+      <Route path="/surveys/:id/analytics" element={<Suspense fallback={<p className="admin-main" role="status">Carregando analytics…</p>}><SurveyAnalytics onSignOut={handleSignOut} /></Suspense>} />
       <Route path="/surveys/:id" element={<SurveyDetail onSignOut={handleSignOut} />} />
       <Route path="*" element={<Navigate to="/admin" replace />} />
     </Routes>

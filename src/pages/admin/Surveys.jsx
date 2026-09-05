@@ -14,7 +14,7 @@ export default function Surveys({ onSignOut }) {
   useEffect(() => {
     supabase
       .from('surveys')
-      .select('id, token, company_name, stakeholder_name, stakeholder_role, is_active, created_at')
+      .select('*')
       .order('created_at', { ascending: false })
       .then(({ data, error }) => {
         if (!error) setSurveys(data ?? [])
@@ -170,6 +170,7 @@ export default function Surveys({ onSignOut }) {
                               {s.company_name}
                             </span>
                           )}
+                          <p className="eyebrow" style={{ marginTop: 6 }}>{s.application_phase === 'final' ? 'Aplicação final' : 'Diagnóstico inicial'}</p>
                         </td>
                         <td>
                           <span>{s.stakeholder_name}</span>

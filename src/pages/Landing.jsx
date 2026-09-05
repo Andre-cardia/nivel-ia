@@ -26,7 +26,7 @@ export default function Landing({ onStart, survey }) {
 
         {/* Eyebrow brand */}
         <p className="hero-brand animate-rise">
-          Neural Hub · Diagnóstico Executivo
+          Neural Hub · {survey?.application_phase === 'final' ? 'Aplicação final — após o treinamento' : 'Diagnóstico Executivo'}
         </p>
 
         {/* Main headline */}

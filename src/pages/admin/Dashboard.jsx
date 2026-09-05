@@ -14,7 +14,7 @@ export default function AdminDashboard({ onSignOut }) {
   useEffect(() => {
     supabase
       .from('surveys')
-      .select('id, company_name, stakeholder_name, stakeholder_role, token, is_active, created_at, assessments(total_score, questionnaire_version, scoring_model, score_max)')
+      .select('*, assessments(total_score, questionnaire_version, scoring_model, score_max)')
       .order('created_at', { ascending: false })
       .then(({ data, error }) => {
         if (!error && data) {
@@ -141,6 +141,7 @@ export default function AdminDashboard({ onSignOut }) {
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                     <div>
                       <p style={{ fontWeight: 700, fontSize: '1rem' }}>{s.company_name}</p>
+                      <span className="eyebrow">{s.application_phase === 'final' ? 'Aplicação final' : 'Diagnóstico inicial'}</span>
                       <p style={{ fontSize: '0.8rem', color: 'var(--muted)', marginTop: 'var(--s1)' }}>
                         {s.stakeholder_name}{s.stakeholder_role ? ` · ${s.stakeholder_role}` : ''}
                       </p>
