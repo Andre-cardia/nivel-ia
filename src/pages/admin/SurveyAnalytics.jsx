@@ -7,6 +7,7 @@ import { EMPTY_FILTERS, MISSING, csvContent, distribution, filterAssessments, gr
 import { loadAnalyticsAssessments, loadSurveyChoices } from '../../lib/analyticsSource'
 import { AnalyticsTable, ChartPanel } from './AnalyticsCharts'
 import AnalyticsRounds from './AnalyticsRounds'
+import AnalyticsHistorical from './AnalyticsHistorical'
 import { displayNumber as fmt } from '../../lib/analytics'
 import './analytics.css'
 
@@ -177,7 +178,7 @@ export default function SurveyAnalytics({ onSignOut, client = supabase }) {
           <FilterField label="Departamento" value={filters.department} onChange={value => changeFilter('department', value)} options={choices('respondent_department')} />
           <FilterField label="Cargo" value={filters.role} onChange={value => changeFilter('role', value)} options={choices('respondent_role')} />
           <FilterField label="Frequência de IA" value={filters.usage} onChange={value => changeFilter('usage', value)} options={[{ value: '', label: 'Todas' }, ...Object.entries(USAGE_OPTIONS).map(([value, label]) => ({ value, label })), { value: MISSING, label: MISSING }]} />
-          <div className="analytics-filter-shortcuts"><span className="analytics-note">{section === 5 ? 'As duas aplicações são comparadas integralmente, com os mesmos filtros de perfil.' : 'Datas filtram a coleta, não representam evolução de aprendizado.'}</span><button className="btn btn-outline" onClick={() => { setFilters(EMPTY_FILTERS); setPage(0) }}>Limpar filtros</button></div>
+          <div className="analytics-filter-shortcuts"><span className="analytics-note">{section === 5 ? 'As duas aplicações são comparadas integralmente, com os mesmos filtros de perfil.' : 'Datas filtram a coleta, não representam evolução de aprendizado.'}</span><button className="btn btn-outline" onClick={() => { setFilters(previous => ({ ...EMPTY_FILTERS, version: previous.version })); setPage(0) }}>Limpar filtros</button></div>
         </section>}
         <p className="analytics-context">{section === 5 ? `${versionLabel(filters.version)} · ${filters.department || 'Todos os departamentos'} · ${filters.role || 'Todos os cargos'} · ${USAGE_OPTIONS[filters.usage] || filters.usage || 'Todas as frequências'} · Coleta completa das duas rodadas` : context}</p>
         {section !== 5 && invalidDateRange && <p role="alert" className="analytics-warning">A data inicial deve ser anterior ou igual à data final.</p>}
@@ -189,7 +190,7 @@ export default function SurveyAnalytics({ onSignOut, client = supabase }) {
         </div>}
         {section !== 5 && isKnowledge && filtered.length > stats.n && <p className="analytics-warning">{filtered.length - stats.n} registro(s) sem nota/modelo válido excluído(s) das métricas de conhecimento.</p>}
         {section !== 5 && isKnowledge && stats.n > 0 && stats.n < 5 && <p className="analytics-warning">Amostra pequena (n={stats.n}). Comparações são descritivas; não demonstram diferenças estatísticas.</p>}
-        {!isKnowledge && <p className="card analytics-warning">Histórico preservado. As notas desta versão estão na tabela; não são agregadas ou comparadas com Conhecimento v2.</p>}
+        {!isKnowledge && <p className="card analytics-warning">Questionário original: gráficos dos resultados registrados, separados de Conhecimento v2. Escala e gabarito históricos não são presumidos.</p>}
         {section !== 5 && !filtered.length && <p role="status" className="analytics-empty">Nenhum respondente corresponde aos filtros selecionados.</p>}
         {!presenting && <nav className="analytics-tabs" aria-label="Seções de analytics">{SECTIONS.map((name, i) => <button key={name} aria-current={section === i ? 'page' : undefined} onClick={() => setSection(i)}>{name}</button>)}</nav>}
         {presenting && <div className="analytics-slide-title"><span>{section + 1} / {SECTIONS.length}</span><h2>{SECTIONS[section]}</h2></div>}
@@ -236,8 +237,8 @@ export default function SurveyAnalytics({ onSignOut, client = supabase }) {
           <div className="analytics-pagination"><button className="btn btn-outline" disabled={!safePage} onClick={() => setPage(safePage - 1)}>Anterior</button><span>Página {safePage + 1} de {Math.max(1, Math.ceil(details.length / 25))}</span><button className="btn btn-outline" disabled={(safePage + 1) * 25 >= details.length} onClick={() => setPage(safePage + 1)}>Próxima</button></div>
         </section>}
         {section === 5 && <AnalyticsRounds key={id} client={client} surveyId={id} filters={filters} presenting={presenting} refresh={refresh} />}
-        {!isKnowledge && section < 3 && <p className="analytics-empty">Explore o perfil de uso e a tabela de dados, ou selecione Conhecimento v2 para as análises de nota.</p>}
-        <footer className="analytics-footer"><span>Fonte: registros do diagnóstico · Carregado em {dataset.updated} · Datas de coleta em Brasília.</span>{section !== 5 && <span>{valid.length} notas válidas / {filtered.length} respondentes no recorte</span>}</footer>
+        {!isKnowledge && section < 3 && <AnalyticsHistorical rows={filtered} allRows={rows} section={section} client={client} refresh={refresh} />}
+        <footer className="analytics-footer"><span>Fonte: registros do diagnóstico · Carregado em {dataset.updated} · Datas de coleta em Brasília.</span>{section !== 5 && <span>{isKnowledge ? `${valid.length} notas válidas / ${filtered.length} respondentes no recorte` : `${filtered.length} registros históricos no recorte`}</span>}</footer>
         {presenting && <nav className="analytics-presentation-nav" aria-label="Controles de apresentação"><button className="btn btn-outline" disabled={!section} onClick={() => setSection(v => v - 1)}>← Anterior</button><span aria-live="polite">{section + 1}/{SECTIONS.length} · {SECTIONS[section]}</span><button className="btn btn-primary" disabled={section === SECTIONS.length - 1} onClick={() => setSection(v => v + 1)}>Próximo →</button></nav>}
       </>}
     </main>
